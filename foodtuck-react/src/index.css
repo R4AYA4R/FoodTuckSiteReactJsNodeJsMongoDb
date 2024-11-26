@@ -1,6 +1,9 @@
 /* подключаем шрифты */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+/* это еще один шрифт */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Miniver&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 *,
 *::before,
 *::after {
@@ -112,4 +115,106 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.sectionTop{
+    transform: translateX(-50%);
+    opacity: 0;
+    transition:all 1s ease;
+}
+
+.sectionTop__active{
+    transform:translateX(0);
+    opacity: 1;
+}
+
+.sectionTop__inner{
+    display: flex;
+    gap:30px;
+}
+
+.sectionTop__rightBlockImg{
+    max-width: 650px;
+}
+
+.sectionTop__leftBlock-subtitle{
+    font-family: 'Miniver',cursive;
+    font-size: 18px;
+    font-weight: 400;
+    color: #195A00;
+    margin-bottom: 8px;
+    margin-top: 140px;
+}
+
+.sectionTop__leftBlock-title{
+    font-weight: 700;
+    font-size: 60px;
+    color: #333333;
+    margin-bottom: 32px;
+}
+
+.sectionTop__leftBlock-text{
+    font-size: 16px;
+    font-weight: 400;
+    color: #4F4F4F;
+    margin-bottom: 31px;
+    max-width: 424px;
+}
+
+.sectionTop__leftBlock-link{
+    display: inline-block;
+    padding: 16px 48px;
+    background-color: #195A00;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color .5s ease;
+}
+
+.sectionTop__leftBlock-link:hover{
+    background-color: #FF9F0D;
+}
+
+.sectionImportantFood{
+    margin: 195px 0 160px 0;
+    opacity: 0;
+    transition:all 1s ease;
+    transform: translateX(-50%);
+}
+
+.sectionImportantFood__active{
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.sectionImportantFood__rightBlock-subtitle{
+    font-family: 'Miniver',cursive;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    color: #195A00;
+}
+
+.sectionImportantFood__rightBlock-title{
+    font-weight: 700;
+    font-size: 48px;
+    margin-bottom: 32px;
+}
+
+.sectionImportantFood__inner{
+    display: flex;
+    align-items: center;
+    gap:125px;
+}
+
+.sectionImportantFood__leftBlock{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap:24px;
+}
+
+.sectionImportantFood__imgBlock-imgNaggets{
+    margin: 54px 0 27px 0;
 }

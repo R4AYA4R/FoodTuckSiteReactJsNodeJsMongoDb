@@ -1,8 +1,11 @@
+import SectionImportantFood from "../components/SectionImportantFood";
+import SectionTop from "../components/SectionTop";
 
 const HomePage = ()=>{
     return(
         <main className="main">
-            homePage
+            <SectionTop/>
+            <SectionImportantFood/>
         </main>
     )
 }
