@@ -1,4 +1,6 @@
+import SectionAboutCreate from "../components/SectionAboutCreate";
 import SectionImportantFood from "../components/SectionImportantFood";
+import SectionPartners from "../components/SectionPartners";
 import SectionTop from "../components/SectionTop";
 
 const HomePage = ()=>{
@@ -6,6 +8,8 @@ const HomePage = ()=>{
         <main className="main">
             <SectionTop/>
             <SectionImportantFood/>
+            <SectionAboutCreate/>
+            <SectionPartners/>
         </main>
     )
 }

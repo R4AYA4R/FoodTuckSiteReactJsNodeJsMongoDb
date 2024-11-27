@@ -22,6 +22,7 @@ body {
     font-weight: 400;
     font-size: 16px;
     color: #4F4F4F;
+    overflow-x: hidden; /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
 }
 
 .container {
@@ -78,16 +79,16 @@ a {
     cursor: pointer;
     opacity: 1;
     transition: all .5s ease;
+    font-weight: 500;
 }
 
 .header__menu-linkActive{
     font-size: 16px;
-    font-weight: 600;
-    color: #292828;
+    color: #000;
 }
 
 .header__menu-link:hover {
-    color: #333333;
+    color: #000;
     opacity: 0.7;
 }
 
@@ -217,4 +218,50 @@ a {
 
 .sectionImportantFood__imgBlock-imgNaggets{
     margin: 54px 0 27px 0;
+}
+
+.sectionAboutCreate{
+    margin-bottom: 100px;
+}
+
+.sectionAboutCreate__inner{
+    display: flex;
+    gap:98px;
+}
+
+.sectionAboutCreate__items-item{
+    display: flex;
+    align-items: center;
+    gap:10px;
+    margin-bottom: 40px;
+}
+
+.sectionAboutCreate__rightBlock-images{
+    display: flex;
+    align-items: center;
+    gap:16px;
+    margin-top: 16px;
+}
+
+.sectionPartners{
+    margin-bottom: 107px;
+    opacity: 0;
+    transform: translateX(50%);
+    transition: all 1s ease;
+}
+
+.sectionPartners__active{
+    transform:translateX(0);
+    opacity: 1;
+}
+
+.sectionPartners__subtitle,
+.sectionPartners__title{
+    text-align: center;
+}
+
+.sectionPartners__images{
+    display: flex;
+    align-items: center;
+    gap:70px;
 }
