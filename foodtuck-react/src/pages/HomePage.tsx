@@ -1,5 +1,6 @@
 import SectionAboutCreate from "../components/SectionAboutCreate";
 import SectionImportantFood from "../components/SectionImportantFood";
+import SectionMenu from "../components/SectionMenu";
 import SectionPartners from "../components/SectionPartners";
 import SectionTop from "../components/SectionTop";
 
@@ -10,6 +11,7 @@ const HomePage = ()=>{
             <SectionImportantFood/>
             <SectionAboutCreate/>
             <SectionPartners/>
+            <SectionMenu/>
         </main>
     )
 }
