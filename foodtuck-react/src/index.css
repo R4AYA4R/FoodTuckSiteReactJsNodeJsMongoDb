@@ -43,6 +43,16 @@ a {
     /* убираем подчеркивание ссылок */
 }
 
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main{
+    flex-grow: 1;
+}
+
 /* повесили на .header::after картинку фона */
 .header::after {
     content: "";
@@ -331,4 +341,60 @@ a {
     font-weight: 700;
     font-size: 24px;
     color: #195A00;
+}
+
+.footer__topBlock{
+    padding: 80px 0;
+    background-color: rgba(168,188,161,0.3);
+}
+
+.footer__topBlock-inner{
+    display: flex;
+    justify-content: space-around;   
+}
+
+.footer__leftBlock-text{
+    max-width: 274px;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.topBlock__leftBlock-title{
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.topBlock__item-title{
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 24px;
+}
+
+.footer__item-link{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity .5s ease;
+}
+
+.footer__item-link:hover{
+    opacity: 0.7;
+}
+
+.footer__bottomBlock{
+    background-color: #195A00;
+    padding: 22px 0;
+}
+
+.footer__bottomBlock-text{
+    font-size: 14px;
+    font-weight: 400;
+    color: #fff;
+    text-align: center;
 }
