@@ -11,6 +11,9 @@ import cookieParser from 'cookie-parser'; // импортируем cookieParser
 import cors from 'cors'; // импортируем cors,чтобы можно было отправлять запросы на сервер из браузера(в данном случае импортируем это вручную,потому что автоматически не импортируется)
 
 import mongoose from 'mongoose'; // импортируем mongoose,для упрощенной работы с mongodb
+import mealModel from './models/mealModel.js';
+import router from './router/router.js';
+import errorMiddleware from './middlewares/errorMiddleware.js';
 
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
@@ -27,7 +30,10 @@ app.use(cors({
 }))
 
 app.use(express.json()); // подключаем express.json(),чтобы наш сервер мог парсить json формат данных,то есть обмениваться с браузером json форматом данных
+ 
+app.use('/api',router); // подключаем роутер к нашему серверу,первым параметром указываем url по которому будет отрабатывать этот роутер,а вторым параметром указываем сам роутер 
 
+app.use(errorMiddleware); // подключаем наш middleware для обработки ошибок,middleware для обработки ошибок нужно подключать в самом конце всех подключений use()
 
 // делаем эту функцию start асинхронной,так как все операции с базой данных являются асинхронными
 const start = async () => {
@@ -37,6 +43,15 @@ const start = async () => {
         await mongoose.connect(process.env.DB_URL); // подключаемся к базе данных,используя функцию connect(),в ее параметрах указываем ссылку для подключения к базе данных,которую взяли на сайте mongodb,в данном случае вынесли эту ссылку в конфигурационный файл .env,и берем его оттуда с помощью process.env,в этой ссылке для подключения к базе данных mongoDb нужно будет вставить(указать) пароль пользователя в эту строку вместо <db_password>,который указывали при создании кластера(cluster) на сайте mongoDb
 
         app.listen(PORT,() => console.log(`Server started on PORT = ${PORT}`)); // запускаем сервер,говоря ему прослушивать порт 5000(указываем первым параметром у listen() нашу переменную PORT) с помощью listen(),и вторым параметром указываем функцию,которая выполнится при успешном запуске сервера
+
+        // использовали это 1 раз,чтобы создать такие объекты в базе данных 1 раз,чтобы они просто там были,после этого этот код закомментировали
+        // await mealModel.create({name:"Burger",price:8,priceFilter:"Under $10",amount:1,rating:0,totalPrice:8,image:"Mask Group (4).png"}); // создали в базе данных в сущности блюд объект блюда с нужными полями
+
+        // await mealModel.create({name:"Drink",price:11,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:11,image:"Mask Group (1).png"});
+
+        // await mealModel.create({name:"Pizza",price:21,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:21,image:"Mask Group.png"});
+
+        // await mealModel.create({name:"Cheese Butter",price:7,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:7,image:"Mask Group (2).png"});
 
     }catch(e){
         console.log(e);
