@@ -94,7 +94,7 @@ a {
 
 .header__menu-linkActive{
     font-size: 16px;
-    color: #000;
+    color: #FF9F0D;
 }
 
 .header__menu-link:hover {
@@ -402,4 +402,118 @@ a {
     font-weight: 400;
     color: #fff;
     text-align: center;
+}
+
+.sectionCatalogTop{
+    padding: 30px 0;
+    margin: 0;
+    border-top: 1px solid #E0E0E0;
+}
+
+.sectionCatalog{
+    margin: 70px 0;
+}
+
+.sectionCatalogTop__info{
+    display: flex;
+    align-items: center;    
+    gap: 5px;
+    justify-content: center;
+}
+
+.sectionCatalogTop__text{
+    font-size: 20px;
+    font-weight: 400;
+    color: #fff;
+}
+
+.sectionCatalogTop__textActive{
+    font-size: 20px;
+    font-weight: 400;
+    color: #FF9F0D;
+}
+
+.sectionCatalogTop__title{
+    margin-bottom: 20px;
+    font-size: 42px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+}
+
+.sectionCatalog__filterBar{
+    padding: 24px 30px;
+    border: 1px solid #E0E0E0;
+    border-radius: 6px;
+}
+
+.sectionCatalog__inner{
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: 24px;
+}
+
+.filterBar__filterBlock-title{
+    color: #333333;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.filterBar__filterBlock-label{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.filterBlock__label-input{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip:rect(0 0 0 0); /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
+}
+
+.filterBlock__label-radioStyle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #CCCCCC;
+    border-radius: 50%;
+    transition: all .5s ease;
+}
+
+.filterBlock__label-text{
+    font-size: 18px;
+    font-weight: 400;
+    color: #333333;
+    margin-left: 28px;
+}
+
+.filterBar__filterBlock-label:hover .filterBlock__label-radioStyle{
+    border: 1px solid #FF9F0D;
+}
+
+.filterBlock__label-radioStyle--active{
+    border: 1px solid #FF9F0D;
+}
+
+.label__radioStyle-before{
+    opacity: 0;
+}
+
+.label__radioStyle-before--active{
+    opacity: 1;
+    display: block;
+    width: 11px;
+    height: 11px;
+    background-color: #FF9F0D;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    transition:opacity .5s ease;
 }

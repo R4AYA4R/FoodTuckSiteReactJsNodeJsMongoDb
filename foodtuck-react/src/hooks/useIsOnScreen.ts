@@ -8,6 +8,7 @@ export const useIsOnCreen = (ref:RefObject<HTMLElement>)=>{
         sectionTopIntersecting:false,
         sectionImportantFoodIntersecting:false,
         sectionPartnersIntersecting:false,
+        sectionCatalogTopIntersecting:false,
     })
 
 
@@ -37,6 +38,13 @@ export const useIsOnCreen = (ref:RefObject<HTMLElement>)=>{
                 if(entry.target.id === 'sectionPartners'){
 
                     setIsIntersectingNow((prev)=>({...prev,sectionPartnersIntersecting:true})); // изменяем состояние текущего наблюдения,возвращая новый объект,куда разворачиваем все предыдущие состония как они и были,только меняем одно состояние для конкретного html элемента(в данном случае sectionTopIntersecting) на true, чтобы не обарачивать все в квадратные скобки и потом не писать return,просто можно обернуть объект в круглые скобки(это тоже самое)
+
+                    observer.unobserve(entry.target); // убираем отслеживание текущего элемента,чтобы больше observer не следил за этим элементом
+                }
+
+                if(entry.target.id === 'sectionCatalogTop'){
+
+                    setIsIntersectingNow((prev)=>({...prev,sectionCatalogTopIntersecting:true})); // изменяем состояние текущего наблюдения,возвращая новый объект,куда разворачиваем все предыдущие состония как они и были,только меняем одно состояние для конкретного html элемента(в данном случае sectionTopIntersecting) на true, чтобы не обарачивать все в квадратные скобки и потом не писать return,просто можно обернуть объект в круглые скобки(это тоже самое)
 
                     observer.unobserve(entry.target); // убираем отслеживание текущего элемента,чтобы больше observer не следил за этим элементом
                 }
