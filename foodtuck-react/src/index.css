@@ -22,7 +22,8 @@ body {
     font-weight: 400;
     font-size: 16px;
     color: #4F4F4F;
-    overflow-x: hidden; /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
+    overflow-x: hidden;
+    /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
 }
 
 .container {
@@ -43,13 +44,13 @@ a {
     /* убираем подчеркивание ссылок */
 }
 
-.wrapper{
+.wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
-.main{
+.main {
     flex-grow: 1;
 }
 
@@ -59,10 +60,10 @@ a {
     width: 100%;
     height: 780px;
     background-image: url('/public/images/header/Bg.png');
-    background-position: right;
+    background-position: right bottom;
     background-repeat: no-repeat;
     position: absolute;
-    top: 0;
+    top: -285px;
     left: 0;
     z-index: -2;
 }
@@ -92,7 +93,7 @@ a {
     font-weight: 500;
 }
 
-.header__menu-linkActive{
+.header__menu-linkActive {
     font-size: 16px;
     color: #FF9F0D;
 }
@@ -107,7 +108,7 @@ a {
     font-weight: 700;
 }
 
-.header__menu-linkCart{
+.header__menu-linkCart {
     position: relative;
 }
 
@@ -128,28 +129,28 @@ a {
     align-items: center;
 }
 
-.sectionTop{
+.sectionTop {
     transform: translateX(-50%);
     opacity: 0;
-    transition:all 1s ease;
+    transition: all 1s ease;
 }
 
-.sectionTop__active{
-    transform:translateX(0);
+.sectionTop__active {
+    transform: translateX(0);
     opacity: 1;
 }
 
-.sectionTop__inner{
+.sectionTop__inner {
     display: flex;
-    gap:30px;
+    gap: 30px;
 }
 
-.sectionTop__rightBlockImg{
+.sectionTop__rightBlockImg {
     max-width: 650px;
 }
 
-.sectionTop__leftBlock-subtitle{
-    font-family: 'Miniver',cursive;
+.sectionTop__leftBlock-subtitle {
+    font-family: 'Miniver', cursive;
     font-size: 18px;
     font-weight: 400;
     color: #195A00;
@@ -157,14 +158,14 @@ a {
     margin-top: 140px;
 }
 
-.sectionTop__leftBlock-title{
+.sectionTop__leftBlock-title {
     font-weight: 700;
     font-size: 60px;
     color: #333333;
     margin-bottom: 32px;
 }
 
-.sectionTop__leftBlock-text{
+.sectionTop__leftBlock-text {
     font-size: 16px;
     font-weight: 400;
     color: #4F4F4F;
@@ -172,7 +173,7 @@ a {
     max-width: 424px;
 }
 
-.sectionTop__leftBlock-link{
+.sectionTop__leftBlock-link {
     display: inline-block;
     padding: 16px 48px;
     background-color: #195A00;
@@ -184,187 +185,188 @@ a {
     transition: background-color .5s ease;
 }
 
-.sectionTop__leftBlock-link:hover{
+.sectionTop__leftBlock-link:hover {
     background-color: #FF9F0D;
 }
 
-.sectionImportantFood{
+.sectionImportantFood {
     margin: 195px 0 160px 0;
     opacity: 0;
-    transition:all 1s ease;
+    transition: all 1s ease;
     transform: translateX(-50%);
 }
 
-.sectionImportantFood__active{
+.sectionImportantFood__active {
     opacity: 1;
     transform: translateX(0);
 }
 
-.sectionImportantFood__rightBlock-subtitle{
-    font-family: 'Miniver',cursive;
+.sectionImportantFood__rightBlock-subtitle {
+    font-family: 'Miniver', cursive;
     font-size: 18px;
     font-weight: 400;
     margin-bottom: 8px;
     color: #195A00;
 }
 
-.sectionImportantFood__rightBlock-title{
+.sectionImportantFood__rightBlock-title {
     font-weight: 700;
     font-size: 48px;
     margin-bottom: 32px;
 }
 
-.sectionImportantFood__inner{
+.sectionImportantFood__inner {
     display: flex;
     align-items: center;
-    gap:125px;
+    gap: 125px;
 }
 
-.sectionImportantFood__leftBlock{
+.sectionImportantFood__leftBlock {
     display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap:24px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
 }
 
-.sectionImportantFood__imgBlock-imgNaggets{
+.sectionImportantFood__imgBlock-imgNaggets {
     margin: 54px 0 27px 0;
 }
 
-.sectionAboutCreate{
+.sectionAboutCreate {
     margin-bottom: 100px;
 }
 
-.sectionAboutCreate__inner{
+.sectionAboutCreate__inner {
     display: flex;
-    gap:98px;
+    gap: 98px;
 }
 
-.sectionAboutCreate__items-item{
+.sectionAboutCreate__items-item {
     display: flex;
     align-items: center;
-    gap:10px;
+    gap: 10px;
     margin-bottom: 40px;
 }
 
-.sectionAboutCreate__rightBlock-images{
+.sectionAboutCreate__rightBlock-images {
     display: flex;
     align-items: center;
-    gap:16px;
+    gap: 16px;
     margin-top: 16px;
 }
 
-.sectionPartners{
+.sectionPartners {
     margin-bottom: 107px;
     opacity: 0;
     transform: translateX(50%);
     transition: all 1s ease;
 }
 
-.sectionPartners__active{
-    transform:translateX(0);
+.sectionPartners__active {
+    transform: translateX(0);
     opacity: 1;
 }
 
 .sectionPartners__subtitle,
-.sectionPartners__title{
+.sectionPartners__title {
     text-align: center;
 }
 
-.sectionPartners__images{
+.sectionPartners__images {
     display: flex;
     align-items: center;
-    gap:70px;
+    gap: 70px;
 }
 
-.sectionMenu{
+.sectionMenu {
     margin-bottom: 200px;
 }
 
-.sectionMenu__title{
+.sectionMenu__title {
     font-size: 48px;
     font-weight: 700;
     margin-bottom: 8px;
     text-align: center;
 }
 
-.sectionMenu__subtitle{
+.sectionMenu__subtitle {
     font-size: 16px;
     font-weight: 400;
     margin-bottom: 56px;
     text-align: center;
     max-width: 418px;
     justify-self: center;
-}   
+}
 
-.sectionMenu__meals{
+.sectionMenu__meals {
     border-top: 1px solid #E0E0E0;
     padding-top: 56px;
     display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap:24px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
 }
 
 
-.meals__item{
+.meals__item {
     border-bottom: 1px dashed #E0E0E0;
     padding-bottom: 16px;
     display: flex;
     justify-content: space-between;
-    transition:all .5s ease;
+    transition: all .5s ease;
     opacity: 1;
     cursor: pointer;
     margin-bottom: 24px;
 }
 
-.meals__item:hover{
-    opacity: 0.7;;
+.meals__item:hover {
+    opacity: 0.7;
+    ;
 }
 
-.meals__item-leftBlock{
+.meals__item-leftBlock {
     display: flex;
-    gap:9px;
+    gap: 9px;
 }
 
-.meals__info-title{
+.meals__info-title {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 7px;
     color: #333333;
 }
 
-.meals__info-subtitle{
+.meals__info-subtitle {
     font-size: 16px;
     font-weight: 400;
 }
 
-.meals__item-img{
+.meals__item-img {
     max-width: 80px;
     border-radius: 6px;
 }
 
-.meals__info-price{
+.meals__info-price {
     font-weight: 700;
     font-size: 24px;
     color: #195A00;
 }
 
-.footer__topBlock{
+.footer__topBlock {
     padding: 80px 0;
-    background-color: rgba(168,188,161,0.3);
+    background-color: rgba(168, 188, 161, 0.3);
 }
 
-.footer__topBlock-inner{
+.footer__topBlock-inner {
     display: flex;
-    justify-content: space-around;   
+    justify-content: space-around;
 }
 
-.footer__leftBlock-text{
+.footer__leftBlock-text {
     max-width: 274px;
     font-size: 18px;
     font-weight: 400;
 }
 
-.topBlock__leftBlock-title{
+.topBlock__leftBlock-title {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 24px;
@@ -372,13 +374,13 @@ a {
     display: inline-block;
 }
 
-.topBlock__item-title{
+.topBlock__item-title {
     font-weight: 700;
     font-size: 20px;
     margin-bottom: 24px;
 }
 
-.footer__item-link{
+.footer__item-link {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -388,79 +390,83 @@ a {
     transition: opacity .5s ease;
 }
 
-.footer__item-link:hover{
+.footer__item-link:hover {
     opacity: 0.7;
 }
 
-.footer__bottomBlock{
+.footer__bottomBlock {
     background-color: #195A00;
     padding: 22px 0;
 }
 
-.footer__bottomBlock-text{
+.footer__bottomBlock-text {
     font-size: 14px;
     font-weight: 400;
     color: #fff;
     text-align: center;
 }
 
-.sectionCatalogTop{
+.sectionCatalogTop {
     padding: 30px 0;
     margin: 0;
     border-top: 1px solid #E0E0E0;
 }
 
-.sectionCatalog{
+.sectionCatalog {
     margin: 70px 0;
 }
 
-.sectionCatalogTop__info{
+.sectionCatalogTop__info {
     display: flex;
-    align-items: center;    
+    align-items: center;
     gap: 5px;
     justify-content: center;
 }
 
-.sectionCatalogTop__text{
+.sectionCatalogTop__text {
     font-size: 20px;
     font-weight: 400;
-    color: #fff;
+    color: #BDBDBD;
 }
 
-.sectionCatalogTop__textActive{
+.sectionCatalogTop__textActive {
     font-size: 20px;
     font-weight: 400;
     color: #FF9F0D;
 }
 
-.sectionCatalogTop__title{
+.sectionCatalogTop__title {
     margin-bottom: 20px;
     font-size: 42px;
     font-weight: 700;
-    color: #fff;
+    color: #BDBDBD;
     text-align: center;
 }
 
-.sectionCatalog__filterBar{
+.sectionCatalogTop__img {
+    max-width: 16px;
+}
+
+.sectionCatalog__filterBar {
     padding: 24px 30px;
     border: 1px solid #E0E0E0;
     border-radius: 6px;
 }
 
-.sectionCatalog__inner{
+.sectionCatalog__inner {
     display: grid;
     grid-template-columns: 1fr 4fr;
     gap: 24px;
 }
 
-.filterBar__filterBlock-title{
+.filterBar__filterBlock-title {
     color: #333333;
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 24px;
 }
 
-.filterBar__filterBlock-label{
+.filterBar__filterBlock-label {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -468,12 +474,13 @@ a {
     cursor: pointer;
 }
 
-.filterBlock__label-input{
+.filterBlock__label-input {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
-    clip:rect(0 0 0 0); /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
+    clip: rect(0 0 0 0);
+    /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
 }
 
 .filterBlock__label-radioStyle {
@@ -485,26 +492,26 @@ a {
     transition: all .5s ease;
 }
 
-.filterBlock__label-text{
+.filterBlock__label-text {
     font-size: 18px;
     font-weight: 400;
     color: #333333;
     margin-left: 28px;
 }
 
-.filterBar__filterBlock-label:hover .filterBlock__label-radioStyle{
+.filterBar__filterBlock-label:hover .filterBlock__label-radioStyle {
     border: 1px solid #FF9F0D;
 }
 
-.filterBlock__label-radioStyle--active{
+.filterBlock__label-radioStyle--active {
     border: 1px solid #FF9F0D;
 }
 
-.label__radioStyle-before{
+.label__radioStyle-before {
     opacity: 0;
 }
 
-.label__radioStyle-before--active{
+.label__radioStyle-before--active {
     opacity: 1;
     display: block;
     width: 11px;
@@ -513,56 +520,65 @@ a {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     border-radius: 50%;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.sectionCatalog__filterBar-filterBlockPrice{
+.sectionCatalog__filterBar-filterBlockPrice {
     margin-top: 24px;
 }
 
-.filterBlock__priceInputs{
+.filterBlock__priceInputs {
     display: flex;
     align-items: center;
 }
 
 
-.filterBlock__priceInputs-priceInputRight{
+.filterBlock__priceInputs-priceInputRight {
     /* не указываем поворот для правого инпута с типом range,чтобы полоска до ползунка у инпута с типом range начинала идти от левого края */
-     transform: rotateY(180deg); /* указываем поворот по оси Y,в данном случае переворачиваем на 180 градусов(deg) инпут с типом range(ползунок для цены) */
+    transform: rotateY(180deg);
+    /* указываем поворот по оси Y,в данном случае переворачиваем на 180 градусов(deg) инпут с типом range(ползунок для цены) */
 
-    appearance: none; /* убираем базовые стили отображения инпута с типом range,чтобы задать свои */ 
+    appearance: none;
+    /* убираем базовые стили отображения инпута с типом range,чтобы задать свои */
 
     width: 124px;
 
     /* background-color: blue; */
     position: relative;
 
-    top: -10px; /* передвигаем этот инпут с типом range вверх на 10px,чтобы можно было нажимать на наш блок всего инпута и туда перемещался кружочек ползунка у инпута с типом range(то есть подстраиваем этот инпут с типом range под наш весь блок див для этого ползунка) */
+    top: -10px;
+    /* передвигаем этот инпут с типом range вверх на 10px,чтобы можно было нажимать на наш блок всего инпута и туда перемещался кружочек ползунка у инпута с типом range(то есть подстраиваем этот инпут с типом range под наш весь блок див для этого ползунка) */
 
     z-index: 10;
-    height: 1px; /* указываем этому инпуту высоту 1px,чтобы он не мешал другим элементам и не закрывал их,иначе он закрывает */
+    height: 1px;
+    /* указываем этому инпуту высоту 1px,чтобы он не мешал другим элементам и не закрывал их,иначе он закрывает */
 
-    background: transparent; /* указываем прозрачный задний фон этому инпуту с типом range,чтобы его не было видно  */
+    background: transparent;
+    /* указываем прозрачный задний фон этому инпуту с типом range,чтобы его не было видно  */
 }
 
-.filterBlock__priceInputs-priceInputLeft{
+.filterBlock__priceInputs-priceInputLeft {
     /* transform: rotateY(180deg); указываем поворот по оси Y,в данном случае переворачиваем на 180 градусов(deg) инпут с типом range(ползунок для цены) */
 
-    appearance: none; /* убираем базовые стили отображения инпута с типом range,чтобы задать свои */ 
+    appearance: none;
+    /* убираем базовые стили отображения инпута с типом range,чтобы задать свои */
 
 
     width: 124px;
 
     position: relative;
 
-    top: -10px; /* передвигаем этот инпут с типом range вверх на 10px,чтобы можно было нажимать на наш блок всего инпута и туда перемещался кружочек ползунка у инпута с типом range(то есть подстраиваем этот инпут с типом range под наш весь блок див для этого ползунка) */
+    top: -10px;
+    /* передвигаем этот инпут с типом range вверх на 10px,чтобы можно было нажимать на наш блок всего инпута и туда перемещался кружочек ползунка у инпута с типом range(то есть подстраиваем этот инпут с типом range под наш весь блок див для этого ползунка) */
 
     z-index: 10;
-    height: 1px; /* указываем этому инпуту высоту 1px,чтобы он не мешал другим элементам и не закрывал их,иначе он закрывает */
+    height: 1px;
+    /* указываем этому инпуту высоту 1px,чтобы он не мешал другим элементам и не закрывал их,иначе он закрывает */
 
-    background: transparent; /* указываем прозрачный задний фон этому инпуту с типом range,чтобы его не было видно  */
+    background: transparent;
+    /* указываем прозрачный задний фон этому инпуту с типом range,чтобы его не было видно  */
 }
 
 /* в данном случае не используем изменение стиля для полоски до ползунка у инпута с типом range с помощью -webkit-slider-runnable-track,так как сделали свой див для этого и его стилизовали */
@@ -577,26 +593,34 @@ a {
     border-radius: 4px;
 
     /* указываем,чтобы не было границы слева, чтобы инпуты с типом range как бы сливались */
-   /* border-top-left-radius: 0px;
+/* border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
 } */
 
 
 /* указываем стили кружочку(элементу) ползунка(инпута с типом range), -webkit-slider-thumb - это псевдоселектор для кружочка(элемента) ползунка инпута с типом range(для браузеров на движке хромиум типа chrome используем префикс -webkit-,а для браузера firefox(этот браузер на другом движке) указываем префикс -moz- ) */
-.filterBlock__priceInputs-priceInput::-webkit-slider-thumb{
-    appearance: none;  /* убираем базовые стили отображения кружочка(ползунка) у инпута с типом range,чтобы задать свои */
+.filterBlock__priceInputs-priceInput::-webkit-slider-thumb {
+    appearance: none;
+    /* убираем базовые стили отображения кружочка(ползунка) у инпута с типом range,чтобы задать свои */
 
-    background-color: #fff;
+    /* background-color: #fff; */
     cursor: pointer;
     height: 12px;
     width: 12px;
     border-radius: 50%;
-    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.25);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
     position: relative;
     top: -3px;
     z-index: 10;
+    left: -1px;
 
-    pointer-events: all !important; /* указываем это свойство для курсоров мыши типа запрещающего значка трогать элемент и тд,указываем ему значение auto и !important(чтобы это заработало и перебило другие классы,которые были добавлены этому кружочку ползунка у инпута с типом range по дефолту),если это не указать,то иногда может срабатывать значок,что нельзя перетаскивать кружочек ползунка у инпута с типом range */
+    background-image: url('/public/images/sectionCatalog/Group 14698.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    pointer-events: all !important;
+    /* указываем это свойство для курсоров мыши типа запрещающего значка трогать элемент и тд,указываем ему значение auto и !important(чтобы это заработало и перебило другие классы,которые были добавлены этому кружочку ползунка у инпута с типом range по дефолту),если это не указать,то иногда может срабатывать значок,что нельзя перетаскивать кружочек ползунка у инпута с типом range */
 }
 
 /* .filterBlock__priceInputs-priceInput::-webkit-slider-thumb::before{
@@ -612,11 +636,11 @@ a {
     transform:translate(-50%,-50%); 
 } */
 
-.filterBlock__priceInputs-blockInput{
+.filterBlock__priceInputs-blockInput {
     height: 10px;
     position: relative;
     background-color: #FF9F0D;
-    border: 1px solid #E0E0E0; 
+    border: 1px solid #E0E0E0;
     border-radius: 4px;
 
     /* указываем,чтобы не было границы слева, чтобы инпуты с типом range как бы сливались */
@@ -624,8 +648,8 @@ a {
     border-bottom-left-radius: 0px; */
 }
 
-.filterBlock__priceInputs-blockInputRight{
-    left:-4px;
+.filterBlock__priceInputs-blockInputRight {
+    left: -4px;
     border-left: none;
 
     /* убираем слева закругление границы у правого блока для инпута ползунка(инпута с типом range),убираем эту границу слева,чтобы она не показывалась,когда поставили два инпута с типом range вместе  */
@@ -635,8 +659,8 @@ a {
 
 
 /* стилизуем полоску до ползунка у инпута с типом range */
-.priceInputs__blockInput-trackInput{
-    width: 0; 
+.priceInputs__blockInput-trackInput {
+    width: 0;
     background-color: #fff;
     height: 8px;
     position: absolute;
@@ -646,17 +670,19 @@ a {
     z-index: 1;
 }
 
-.priceInputs__blockInput-trackInputRight{
-    right: 0; /* указываем для полоски до ползунка у правого инпута с типом range right:0,чтобы полоска начинала идти от правого края */
+.priceInputs__blockInput-trackInputRight {
+    right: 0;
+    /* указываем для полоски до ползунка у правого инпута с типом range right:0,чтобы полоска начинала идти от правого края */
 
     /* указываем,чтобы не было границы слева, чтобы инпуты с типом range как бы сливались */
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
 
-.priceInputs__blockInput-trackInputLeft{
-    left: 0; /* указываем для полоски до ползунка у правого инпута с типом range left:0,чтобы полоска начинала идти от левого края */
-    
+.priceInputs__blockInput-trackInputLeft {
+    left: 0;
+    /* указываем для полоски до ползунка у правого инпута с типом range left:0,чтобы полоска начинала идти от левого края */
+
     /* указываем,чтобы не было границы слева, чтобы инпуты с типом range как бы сливались */
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -664,9 +690,115 @@ a {
 
 
 
-.filterBlockPrice__priceText{
+.filterBlockPrice__priceText {
     font-size: 16px;
     font-weight: 400;
     color: #707070;
     margin-top: 12px;
+}
+
+.sectionCatalog__main-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sectionCatalog__main-topInputBlock {
+    position: relative;
+    max-width: 230px;
+}
+
+.sectionCatalog__main-topInput {
+    padding: 11px 46px 11px 20px;
+    background-color: rgba(255, 159, 13, 0.4);
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+.sectionCatalog__topInputBlock-img {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+}
+
+.sectionCatalog__main-topSelect {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: 'Inter', sans-serif;
+    margin-top: 3px;
+}
+
+.topSelect__text {
+    font-size: 20px;
+    font-weight: 400;
+    color: #BDBDBD;
+}
+
+.topSelect__inner{
+    position: relative;
+}
+
+.topSelect__selectTop {
+    display: flex;
+    align-items: center;
+    gap: 115px;
+    justify-content: space-between;
+    padding: 10px 18px;
+    border-radius: 4px;
+    border: 1px solid #BDBDBD;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all .5s ease;
+    min-width: 226px;
+    min-height: 45px;
+}
+
+.topSelect__selectTop:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.topSelect__selectTop-text {
+    font-size: 18px;
+    font-weight: 400;
+    color: #707070;
+}
+
+.topSelect__selectTop-img {
+    max-width: 20px;
+}
+
+.topSelect__optionsBlock {
+    max-height: 0;
+    position: absolute;
+    top: 45px;
+    left: 0;
+    opacity: 0;
+    background-color: #fff;
+    border-radius: 4px;
+    width: 100%;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.15);
+    transition: all 1s ease;
+    z-index: -2;
+    overflow: hidden;
+    /* указываем это свойство,чтобы все,что заходит за границы этого блока скрывалось(то есть все элементы,которые в html есть у этого блока), в данном случае,для анимации,когда уменьшаем высоту этого блока,чтобы текст не показывался ниже этого блока */
+}
+
+.topSelect__optionsBlock--active {
+    max-height: 100px;
+    opacity: 1;
+    z-index: 5;
+}
+
+.topSelect__optionsBlock-item {
+    padding: 12px 0 10px 10px;
+    cursor: pointer;
+    transition: all .5s ease;
+}
+
+.topSelect__optionsBlock-item:hover{
+    background-color: rgba(0, 0, 0, 0.1);
 }

@@ -22,6 +22,11 @@ const Catalog = () => {
     const [inputLeftRangePrice,setInputLeftRangePrice] = useState(0);  // состояние для значение цены,которое будет у левого инпута с типом range,будем его показывать как цену,а записывать в него будем значение с немного увеличенным значением как у самого инпута с типом range,чтобы это подходило под нашу цену(так как значение у самого инпута с типом range будет изменяться на минимальное расстояние как 1,а нам нужно,чтобы минимальное расстояние было больше чем 1)
 
 
+    const [inputSearchValue,setInputSearchValue] = useState('');
+
+    const [selectBlockActive,setSelectBlockActive] = useState(false);
+
+    const [selectBlockValue,setSelectBlockValue] = useState('');
 
     const [filterCategories, setFilterCategories] = useState('');
 
@@ -133,6 +138,13 @@ const Catalog = () => {
     }
 
 
+    const selectItemHandler = ()=>{
+
+        setSelectBlockValue('Rating'); // изменяем состояние selectBlockValue на значение Rating
+
+        setSelectBlockActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+    }
+
     return (
         <main className="main" >
             <SectionCatalogTop />
@@ -199,7 +211,27 @@ const Catalog = () => {
                             </div>
                         </div>
                         <div className="sectionCatalog__main">
-                            catalog main
+                            <div className="sectionCatalog__main-top">
+                                <div className="sectionCatalog__main-topInputBlock">
+                                    <input type="text" className="sectionCatalog__main-topInput" placeholder="Search Product" value={inputSearchValue} onChange={(e)=>setInputSearchValue(e.target.value)}/>
+                                    <img src="/images/sectionCatalog/MagnifyingGlass.png" alt="" className="sectionCatalog__topInputBlock-img" />
+                                </div>
+                               
+                               <div className="sectionCatalog__main-topSelect">
+                                    <p className="topSelect__text">Sort By:</p>
+                                    <div className="topSelect__inner">
+                                        <div className="topSelect__selectTop" onClick={()=>setSelectBlockActive((prev)=>!prev)}>
+                                            <p className="topSelect__selectTop-text">{selectBlockValue}</p>
+                                            <img src="/images/sectionCatalog/CaretDown.png" alt="" className="topSelect__selectTop-img" />
+                                        </div>
+                                        <div className={selectBlockActive ? "topSelect__optionsBlock topSelect__optionsBlock--active" : "topSelect__optionsBlock"}>
+                                            <div className="topSelect__optionsBlock-item" onClick={selectItemHandler}>
+                                                <p className="optionsBlock__item-text">Rating</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                               </div>
+                            </div>
                         </div>
                     </div>
                 </div>

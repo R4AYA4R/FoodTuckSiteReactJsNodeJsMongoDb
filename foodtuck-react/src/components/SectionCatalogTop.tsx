@@ -14,7 +14,7 @@ const SectionCatalogTop = () => {
                     <h2 className="sectionCatalogTop__title">Our Catalog</h2>
                     <div className="sectionCatalogTop__info">
                         <p className="sectionCatalogTop__text">Home</p>
-                        <img src="/images/sectionCatalogTop/CaretRight.png" alt="" className="sectionCatalogTop__img" />
+                        <img src="/images/sectionCatalog/CaretRight (1).png" alt="" className="sectionCatalogTop__img" />
                         <p className="sectionCatalogTop__textActive">Catalog</p>
                     </div>
                 </div>
