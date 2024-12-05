@@ -1,6 +1,10 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import SectionCatalogTop from "../components/SectionCatalogTop";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
+import ProductsItem from "../components/ProductsItem";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { IMeal } from "../types/types";
 
 const Catalog = () => {
 
@@ -10,7 +14,7 @@ const Catalog = () => {
 
     const inputRightRangeRef = useRef<HTMLDivElement>(null); // переменная для ссылки на html элемент полоски до ползунка у инпута с типом range
 
-    const [inputRightRangePrice,setInputRightRangePrice] = useState(248); // состояние для значение цены,которое будет у правого инпута с типом range,будем его показывать как цену,а записывать в него будем значение с немного увеличенным значением как у самого инпута с типом range,чтобы это подходило под нашу цену(так как значение у самого инпута с типом range будет изменяться на минимальное расстояние как 1,а нам нужно,чтобы было больше чем 1 минимальное расстояние),ставим изначальное значение 248(в данном случае оно просто в два раза больше ширины инпута с типом range),чтобы сразу показывалось,что это максимальное значение цены
+    const [inputRightRangePrice,setInputRightRangePrice] = useState(100); // состояние для значение цены,которое будет у правого инпута с типом range,будем его показывать как цену,а записывать в него будем значение с немного увеличенным значением как у самого инпута с типом range,чтобы это подходило под нашу цену(так как значение у самого инпута с типом range будет изменяться на минимальное расстояние как 1,а нам нужно,чтобы было больше чем 1 минимальное расстояние),ставим изначальное значение 248(в данном случае оно просто в два раза больше ширины инпута с типом range),чтобы сразу показывалось,что это максимальное значение цены
 
 
     const [inputLeftRangeValue, setInputLeftRangeValue] = useState(0); // состояние для значения левого инпута с типом range,указываем начальное значение 124 в данном случае,чтобы изначально была заполнена вся полоска до ползунка у инпута с типом range
@@ -34,6 +38,19 @@ const Catalog = () => {
     const sectionImportantFoodRef = useRef(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef, указываем в useRef null,так как используем typeScript
 
     const onScreen = useIsOnCreen(sectionImportantFoodRef); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+
+    // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
+    const {data} = useQuery({
+        queryKey:['getMealsCatalog'],
+        queryFn:async () => {
+            const response = await axios.get<IMeal[]>('http://localhost:5000/api/getMealsCatalog'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IMeal,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
+
+            console.log(response.data);
+
+            return response; 
+        }
+    })
 
 
     const OnChangeRangeLeft = (e: ChangeEvent<HTMLInputElement>) => {
@@ -231,6 +248,14 @@ const Catalog = () => {
                                         </div>
                                     </div>
                                </div>
+                            </div>
+
+                            <div className="sectionCatalog__main-products">
+
+                                {data?.data.map(meal =>
+                                    <ProductsItem key={meal._id} meal={meal}/>
+                                )}
+
                             </div>
                         </div>
                     </div>
