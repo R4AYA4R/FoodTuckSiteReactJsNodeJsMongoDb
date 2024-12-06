@@ -4,7 +4,8 @@ import { useIsOnCreen } from "../hooks/useIsOnScreen";
 import ProductsItem from "../components/ProductsItem";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IMeal } from "../types/types";
+import { IMeal, IResponseCatalog } from "../types/types";
+import { getPagesArray } from "../utils/getPagesArray";
 
 const Catalog = () => {
 
@@ -14,7 +15,7 @@ const Catalog = () => {
 
     const inputRightRangeRef = useRef<HTMLDivElement>(null); // переменная для ссылки на html элемент полоски до ползунка у инпута с типом range
 
-    const [inputRightRangePrice,setInputRightRangePrice] = useState(100); // состояние для значение цены,которое будет у правого инпута с типом range,будем его показывать как цену,а записывать в него будем значение с немного увеличенным значением как у самого инпута с типом range,чтобы это подходило под нашу цену(так как значение у самого инпута с типом range будет изменяться на минимальное расстояние как 1,а нам нужно,чтобы было больше чем 1 минимальное расстояние),ставим изначальное значение 248(в данном случае оно просто в два раза больше ширины инпута с типом range),чтобы сразу показывалось,что это максимальное значение цены
+    const [inputRightRangePrice, setInputRightRangePrice] = useState(100); // состояние для значение цены,которое будет у правого инпута с типом range,будем его показывать как цену,а записывать в него будем значение с немного увеличенным значением как у самого инпута с типом range,чтобы это подходило под нашу цену(так как значение у самого инпута с типом range будет изменяться на минимальное расстояние как 1,а нам нужно,чтобы было больше чем 1 минимальное расстояние),ставим изначальное значение 248(в данном случае оно просто в два раза больше ширины инпута с типом range),чтобы сразу показывалось,что это максимальное значение цены
 
 
     const [inputLeftRangeValue, setInputLeftRangeValue] = useState(0); // состояние для значения левого инпута с типом range,указываем начальное значение 124 в данном случае,чтобы изначально была заполнена вся полоска до ползунка у инпута с типом range
@@ -23,16 +24,24 @@ const Catalog = () => {
 
     const [inputLeftRangeTrackWidth, setInputLeftRangeTrackWidth] = useState(0); // состояние для ширины полоски до ползунка у левого инпута с типом range,указываем начальное значение 124 в данном случае,чтобы изначально была заполнена вся полоска до ползунка у инпута с типом range
 
-    const [inputLeftRangePrice,setInputLeftRangePrice] = useState(0);  // состояние для значение цены,которое будет у левого инпута с типом range,будем его показывать как цену,а записывать в него будем значение с немного увеличенным значением как у самого инпута с типом range,чтобы это подходило под нашу цену(так как значение у самого инпута с типом range будет изменяться на минимальное расстояние как 1,а нам нужно,чтобы минимальное расстояние было больше чем 1)
+    const [inputLeftRangePrice, setInputLeftRangePrice] = useState(0);  // состояние для значение цены,которое будет у левого инпута с типом range,будем его показывать как цену,а записывать в него будем значение с немного увеличенным значением как у самого инпута с типом range,чтобы это подходило под нашу цену(так как значение у самого инпута с типом range будет изменяться на минимальное расстояние как 1,а нам нужно,чтобы минимальное расстояние было больше чем 1)
 
 
-    const [inputSearchValue,setInputSearchValue] = useState('');
+    const [inputSearchValue, setInputSearchValue] = useState('');
 
-    const [selectBlockActive,setSelectBlockActive] = useState(false);
+    const [selectBlockActive, setSelectBlockActive] = useState(false);
 
-    const [selectBlockValue,setSelectBlockValue] = useState('');
+    const [selectBlockValue, setSelectBlockValue] = useState('');
 
     const [filterCategories, setFilterCategories] = useState('');
+
+
+    const [page, setPage] = useState(1); // указываем состояние текущей страницы
+
+    const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
+
+    const [limit, setLimit] = useState(1); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
+
 
     // в данном случае скопировали эти useRef из другого компонента,а html  элементу section дали такой же id и такие же классы(кроме одного класса нового sectionAboutCreate),так как анимация появления этой секции такая же,как и в другом компоненте,работает все нормально с одинаковыми id для IntersectionObserver(так как секции в разное время срабатывают,пока пользователь доскроллит(докрутит сайт) до определенной секции )
     const sectionImportantFoodRef = useRef(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef, указываем в useRef null,так как используем typeScript
@@ -41,14 +50,33 @@ const Catalog = () => {
 
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
-    const {data} = useQuery({
-        queryKey:['getMealsCatalog'],
-        queryFn:async () => {
-            const response = await axios.get<IMeal[]>('http://localhost:5000/api/getMealsCatalog'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IMeal,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
+    const { data, refetch } = useQuery({
+        queryKey: ['getMealsCatalog'],
+        queryFn: async () => {
+            // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IResponseCatalog,у этого объекта будут поля meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации)
+            const response = await axios.get<IResponseCatalog>('http://localhost:5000/api/getMealsCatalog', {
+                params: {
+                    limit: limit, // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
 
-            console.log(response.data);
+                    page: page // указываем параметр page(параметр текущей страницы,для пагинации)
+                }
+            }); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IMeal,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
 
-            return response; 
+
+
+            console.log(response);
+
+
+            const totalCount = response?.data.allMeals.length; // записываем общее количество объктов товаров блюд с помощью .length,которые пришли от сервера в переменную totalCount(берем это у поля length у поля allMeals(массив всех объектов блюд без лимитов и состояния текущей страницы,то есть без пагинации) у поля data у response(общий объект ответа от сервера))
+
+            // если totalCount true,то есть в totalCount есть какое-то значение,то изменяем общее количество страниц,делаем эту проверку, потому что totalCount может быть undefined(выдает ошибку такую)
+            if (totalCount) {
+                setTotalPages(Math.ceil(totalCount / limit)); // изменяем состояние totalPages на значение деления totalCount на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
+            }
+
+            console.log(totalPages)
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля meals и allMeals
         }
     })
 
@@ -155,11 +183,35 @@ const Catalog = () => {
     }
 
 
-    const selectItemHandler = ()=>{
+    const selectItemHandler = () => {
 
         setSelectBlockValue('Rating'); // изменяем состояние selectBlockValue на значение Rating
 
         setSelectBlockActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+    }
+
+
+    // указываем в массиве зависимостей этого useEffect data?.meals(массив объектов блюд для отдельной страницы пагинации),чтобы делать повторный запрос на получения объектов товаров при изменении data?.meals,в данном случае это для пагинации,если не указать data?.meals,то пагинация при запуске страницы не будет работать
+    useEffect(() => {
+
+        refetch();  // делаем повторный запрос на получение товаров при изменении data?.meals, inputSearchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния страницы
+
+    }, [data?.meals, page]);
+
+    let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
+
+    const prevPage = () => {
+        // если текущая страница больше или равна 2
+        if (page >= 2) {
+            setPage((prev) => prev - 1); // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
+        }
+    }
+
+    const nextPage = () => {
+        // если текущая страница меньше или равна общему количеству страниц - 1(чтобы после последней страницы не переключалось дальше)
+        if (page <= totalPages - 1) {
+            setPage((prev) => prev + 1); // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
+        }
     }
 
     return (
@@ -214,7 +266,7 @@ const Catalog = () => {
                                     </label>
 
                                     <label htmlFor="rangeRight" className="filterBlock__priceInputs-blockInput filterBlock__priceInputs-blockInputRight">
-                                        <input id="rangeRight" type="range" className="filterBlock__priceInputs-priceInput filterBlock__priceInputs-priceInputRight" min="0" max="124" value={inputRightRangeValue} onChange={OnChangeRangeRight}/>
+                                        <input id="rangeRight" type="range" className="filterBlock__priceInputs-priceInput filterBlock__priceInputs-priceInputRight" min="0" max="124" value={inputRightRangeValue} onChange={OnChangeRangeRight} />
 
                                         {/* указываем этому диву в style в width значение как у состояния inputLeftRangeTrackWidth(то есть состояние для полоски до ползунка у левого инпута с типом range),потом в коде выше изменяем это значение,соответственно и изменяем ширину этого div элемента(полоски до ползунка у инпута с типом range) */}
                                         <div className="priceInputs__blockInput-trackInput priceInputs__blockInput-trackInputRight" style={{ "width": `${inputRightRangeTrackWidth}px` }} ref={inputRightRangeRef} ></div>
@@ -222,7 +274,7 @@ const Catalog = () => {
 
 
                                 </div>
-                                
+
                                 {/* используем здесь для текста цены метод toFixed(0),он указывает,сколько чисел может быть после запятой у числа,в данном случае указали 0 (чтобы было 0 чисел после запятой,также этот метод округляет автоматически число в большую сторону,когда это нужно,типа 1.6 округлит до 2,поэтому и указали более точное число(0.404),на которое умножали текущее значение инпута с типом range,чтобы этот метод toFixed в итоге правильно округлял числа),так как состояния inputLeftRangePrice(состояние цены для левого инпута с типом range) и inputRightRangePrice(состояние цены для правого инпута с типом range) могут получаться не целые при изменении ипнута с типом range */}
                                 <p className="filterBlockPrice__priceText">From ${inputLeftRangePrice.toFixed(0)} to ${inputRightRangePrice.toFixed(0)}</p>
                             </div>
@@ -230,14 +282,14 @@ const Catalog = () => {
                         <div className="sectionCatalog__main">
                             <div className="sectionCatalog__main-top">
                                 <div className="sectionCatalog__main-topInputBlock">
-                                    <input type="text" className="sectionCatalog__main-topInput" placeholder="Search Product" value={inputSearchValue} onChange={(e)=>setInputSearchValue(e.target.value)}/>
+                                    <input type="text" className="sectionCatalog__main-topInput" placeholder="Search Product" value={inputSearchValue} onChange={(e) => setInputSearchValue(e.target.value)} />
                                     <img src="/images/sectionCatalog/MagnifyingGlass.png" alt="" className="sectionCatalog__topInputBlock-img" />
                                 </div>
-                               
-                               <div className="sectionCatalog__main-topSelect">
+
+                                <div className="sectionCatalog__main-topSelect">
                                     <p className="topSelect__text">Sort By:</p>
                                     <div className="topSelect__inner">
-                                        <div className="topSelect__selectTop" onClick={()=>setSelectBlockActive((prev)=>!prev)}>
+                                        <div className="topSelect__selectTop" onClick={() => setSelectBlockActive((prev) => !prev)}>
                                             <p className="topSelect__selectTop-text">{selectBlockValue}</p>
                                             <img src="/images/sectionCatalog/CaretDown.png" alt="" className="topSelect__selectTop-img" />
                                         </div>
@@ -247,16 +299,54 @@ const Catalog = () => {
                                             </div>
                                         </div>
                                     </div>
-                               </div>
+                                </div>
                             </div>
 
                             <div className="sectionCatalog__main-products">
 
-                                {data?.data.map(meal =>
-                                    <ProductsItem key={meal._id} meal={meal}/>
+                                {/* проходимся по массиву объектов блюд meals,указываем data?.meals,так как от сервера в поле data приходит объект с полями meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации) */}
+                                {data?.meals.map(meal =>
+                                    <ProductsItem key={meal._id} meal={meal} />
                                 )}
 
                             </div>
+
+
+                            {/* если длина массива всех объектов товаров блюд(allMeals) true(то есть товары есть),то показывать пагинацию,в другом случае пустая строка(то есть ничего не показывать) */}
+                            {data?.allMeals.length ?
+                                <div className="sectionCatalog__main-pagination">
+                                    <button className="pagination__btnLeft" onClick={prevPage}>
+                                        <img src="/images/sectionCatalog/LeftArrow.png" alt="" className="pagination__btnLeft-img" />
+                                    </button>
+
+                                    {pagesArray.map(p =>
+                                        <button
+                                            key={p}
+
+                                            className={page === p ? "pagination__item pagination__item--active" : "pagination__item"}  //если состояние номера текущей страницы page равно значению элементу массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
+
+                                            onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+
+                                        >
+                                            {p}
+                                        </button>
+                                    )}
+
+
+                                    {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки */}
+                                    {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
+
+
+                                    {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу)  */}
+                                    {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>}
+
+
+                                    <button className="pagination__btnRight" onClick={nextPage}>
+                                        <img src="/images/sectionCatalog/RightArrow.png" alt="" className="pagination__btnRight-img" />
+                                    </button>
+                                </div> : ''
+                            }
+
                         </div>
                     </div>
                 </div>

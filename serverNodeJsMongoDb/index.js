@@ -53,6 +53,12 @@ const start = async () => {
 
         // await mealModel.create({name:"Cheese Butter",price:7,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:7,image:"Mask Group (2).png"});
 
+        // await mealModel.create({name:"Sandwich",price:12,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:12,image:"Mask Group (7).png"});
+
+        // await mealModel.create({name:"Country Burger",price:24,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (5).png"});
+
+        // await mealModel.create({name:"Chicken Chup",price:28,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (6).png"});
+
     }catch(e){
         console.log(e);
     }
