@@ -891,3 +891,9 @@ a {
     background-color: rgba(255, 159, 13,0.6);
     color: #fff;
 }
+
+.products__notFoundText{
+    font-size: 16px;
+    font-weight: 700;
+    color: #333333;
+}

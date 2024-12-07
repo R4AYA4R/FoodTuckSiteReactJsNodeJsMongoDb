@@ -54,7 +54,7 @@ const Catalog = () => {
         queryKey: ['getMealsCatalog'],
         queryFn: async () => {
             // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IResponseCatalog,у этого объекта будут поля meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации)
-            const response = await axios.get<IResponseCatalog>('http://localhost:5000/api/getMealsCatalog', {
+            const response = await axios.get<IResponseCatalog>(`http://localhost:5000/api/getMealsCatalog?name=${inputSearchValue}`, {
                 params: {
                     limit: limit, // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
 
@@ -182,6 +182,14 @@ const Catalog = () => {
         setInputRightRangePrice((248 - +e.target.value) * 0.404); // указываем значение состоянию цены для левого инпута с типом range(inputLeftRangePrice) как 248(максимальное значение цены,которое должно быть в тексте на сайте, (в данном случае оно просто в два раза больше ширины инпута с типом range) ) - текущее значение этого инпута с типом range(e.target.value),чтобы от 248(в данном случае оно просто в два раза больше ширины инпута с типом range) отнималось текущее значение инпута с типом range при изменении текущего значения инпута с типом range,чтобы правильно показывалась цена, также умножаем получившееся значение на 0.404,чтобы получить у этого правого инпута с типом range максимальное значение цены 50,делаем так,потому что ширина этого инпута 124 и минимальное изменение при смещении кружочка ползунка равно 1(типа 1 пикселю и в итоге получилось бы максимальное значение у инпута 124,а нам нужно 50),поэтому умножаем на 0.404(в данном случае просто подобрали примерно это число),чтобы уменьшить минимальное смещение этого инпута так,чтобы в итоге максимальным было 100, то есть в данном случае минимальное смещение у этого инпута было бы примерно 0.5 вместо 1
     }
 
+    // функция при изменении значения инпута поиска
+    const inputSearchChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
+
+        setInputSearchValue(e.target.value); 
+
+        setPage(1); // изменяем состояние текущей страницы на 1,чтобы при поиске страница ставилась на первую
+    }
+
 
     const selectItemHandler = () => {
 
@@ -196,7 +204,7 @@ const Catalog = () => {
 
         refetch();  // делаем повторный запрос на получение товаров при изменении data?.meals, inputSearchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния страницы
 
-    }, [data?.meals, page]);
+    }, [data?.meals, page,inputSearchValue]);
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
@@ -282,7 +290,7 @@ const Catalog = () => {
                         <div className="sectionCatalog__main">
                             <div className="sectionCatalog__main-top">
                                 <div className="sectionCatalog__main-topInputBlock">
-                                    <input type="text" className="sectionCatalog__main-topInput" placeholder="Search Product" value={inputSearchValue} onChange={(e) => setInputSearchValue(e.target.value)} />
+                                    <input type="text" className="sectionCatalog__main-topInput" placeholder="Search Product" value={inputSearchValue} onChange={inputSearchChangeHandler} />
                                     <img src="/images/sectionCatalog/MagnifyingGlass.png" alt="" className="sectionCatalog__topInputBlock-img" />
                                 </div>
 
@@ -304,10 +312,12 @@ const Catalog = () => {
 
                             <div className="sectionCatalog__main-products">
 
-                                {/* проходимся по массиву объектов блюд meals,указываем data?.meals,так как от сервера в поле data приходит объект с полями meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации) */}
-                                {data?.meals.map(meal =>
-                                    <ProductsItem key={meal._id} meal={meal} />
-                                )}
+                                {/* указываем если data?.allMeals.length true(то есть количество всех объектов блюд true,то есть они есть), то показываем объекты блюд,в другом случае показываем текст, проходимся по массиву объектов блюд meals,указываем data?.meals,так как от сервера в поле data приходит объект с полями meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации) */}
+                                {data?.allMeals.length ? data?.meals.map(meal =>
+                                    <ProductsItem key={meal._id} meal={meal} />)
+                                    : 
+                                    <h4 className="products__notFoundText">Not found</h4>
+                                }
 
                             </div>
 
