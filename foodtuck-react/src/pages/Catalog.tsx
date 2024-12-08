@@ -53,8 +53,20 @@ const Catalog = () => {
     const { data, refetch } = useQuery({
         queryKey: ['getMealsCatalog'],
         queryFn: async () => {
-            // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IResponseCatalog,у этого объекта будут поля meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации)
-            const response = await axios.get<IResponseCatalog>(`http://localhost:5000/api/getMealsCatalog?name=${inputSearchValue}`, {
+
+            // выносим url на получение товаров в отдельную переменную,чтобы ее потом изменять
+            let url = `http://localhost:5000/api/getMealsCatalog?name=${inputSearchValue}`;
+
+            // если filterCategories не равно пустой строке(то есть пользователь выбрал категорию),то добавляем к url для получения товаров еще query параметр category и значением как filterCategories, указываем знак амперсанта & для перечисления query параметров в url
+            if (filterCategories !== '') {
+
+                url += `&category=${filterCategories}`;
+
+            }
+
+
+            // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IResponseCatalog,у этого объекта будут поля meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации),вместо url будет подставлено значение,которое есть у нашей переменной url
+            const response = await axios.get<IResponseCatalog>(url, {
                 params: {
                     limit: limit, // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
 
@@ -183,9 +195,9 @@ const Catalog = () => {
     }
 
     // функция при изменении значения инпута поиска
-    const inputSearchChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
+    const inputSearchChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
 
-        setInputSearchValue(e.target.value); 
+        setInputSearchValue(e.target.value);
 
         setPage(1); // изменяем состояние текущей страницы на 1,чтобы при поиске страница ставилась на первую
     }
@@ -202,9 +214,25 @@ const Catalog = () => {
     // указываем в массиве зависимостей этого useEffect data?.meals(массив объектов блюд для отдельной страницы пагинации),чтобы делать повторный запрос на получения объектов товаров при изменении data?.meals,в данном случае это для пагинации,если не указать data?.meals,то пагинация при запуске страницы не будет работать
     useEffect(() => {
 
-        refetch();  // делаем повторный запрос на получение товаров при изменении data?.meals, inputSearchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния страницы
+        refetch();  // делаем повторный запрос на получение товаров при изменении data?.meals, inputSearchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
 
-    }, [data?.meals, page,inputSearchValue]);
+    }, [data?.meals, page, inputSearchValue, filterCategories]);
+
+
+    // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем filterCategory на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и делаем повторный запрос на сервер уже с измененным значение searchValue(чтобы поисковое число(число товаров,которое изменяется при поиске) показвалось правильно,когда вводят что-то в поиск)
+    useEffect(() => {
+
+        setFilterCategories('');
+
+    }, [inputSearchValue])
+
+    // при изменении фильтров и состояния сортировки(selectValue в данном случае) изменяем состояние текущей страницы пагинации на первую
+    useEffect(() => {
+
+        setPage(1);
+
+    }, [filterCategories])
+
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
@@ -310,12 +338,58 @@ const Catalog = () => {
                                 </div>
                             </div>
 
+                            <div className="sectionCatalog__main-filterBlock">
+                                <p className="filterBlock__text">Active Filters:</p>
+
+                                {/* если filterCategories не равно пустой строке,то показываем фильтр с текстом filterCategories,то есть выбран фильтр сортировки по категориям */}
+                                {filterCategories !== '' &&
+
+                                    <div className="filterBlock__item">
+
+                                        {/* если filterCaregories равно Burgers, то показывать текст Burgers */}
+                                        {filterCategories === 'Burgers' && 
+
+                                            <p className="filterBlock__item-text">Burgers</p>
+
+                                        }
+
+                                        {filterCategories === 'Drinks' && 
+
+                                            <p className="filterBlock__item-text">Drinks</p>
+
+                                        }
+                                        
+                                        {filterCategories === 'Pizza' && 
+
+                                            <p className="filterBlock__item-text">Pizza</p>
+
+                                        }
+
+                                        {filterCategories === 'Sandwiches' && 
+
+                                            <p className="filterBlock__item-text">Sandwiches</p>
+
+                                        }
+                                        
+                                        {/* в onClick изменяем значение состояния filterCategories на пустую строку,то есть убираем фильтр по категориям */}
+                                        <button className="filterBlock__item-btn" onClick={()=>setFilterCategories('')}>
+                                            <img src="/images/sectionCatalog/X.png" alt="" className="filterBlock__item-img" />
+                                        </button>
+                                        
+
+                                    </div>
+
+                                }
+
+
+                            </div>
+
                             <div className="sectionCatalog__main-products">
 
                                 {/* указываем если data?.allMeals.length true(то есть количество всех объектов блюд true,то есть они есть), то показываем объекты блюд,в другом случае показываем текст, проходимся по массиву объектов блюд meals,указываем data?.meals,так как от сервера в поле data приходит объект с полями meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации) */}
                                 {data?.allMeals.length ? data?.meals.map(meal =>
                                     <ProductsItem key={meal._id} meal={meal} />)
-                                    : 
+                                    :
                                     <h4 className="products__notFoundText">Not found</h4>
                                 }
 

@@ -45,19 +45,19 @@ const start = async () => {
         app.listen(PORT,() => console.log(`Server started on PORT = ${PORT}`)); // запускаем сервер,говоря ему прослушивать порт 5000(указываем первым параметром у listen() нашу переменную PORT) с помощью listen(),и вторым параметром указываем функцию,которая выполнится при успешном запуске сервера
 
         // использовали это 1 раз,чтобы создать такие объекты в базе данных 1 раз,чтобы они просто там были,после этого этот код закомментировали
-        // await mealModel.create({name:"Burger",price:8,priceFilter:"Under $10",amount:1,rating:0,totalPrice:8,image:"Mask Group (4).png"}); // создали в базе данных в сущности блюд объект блюда с нужными полями
+        // await mealModel.create({name:"Burger",category:"Burgers",price:8,priceFilter:"Under $10",amount:1,rating:0,totalPrice:8,image:"Mask Group (4).png"}); // создали в базе данных в сущности блюд объект блюда с нужными полями
 
-        // await mealModel.create({name:"Drink",price:11,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:11,image:"Mask Group (1).png"});
+        // await mealModel.create({name:"Drink",category:"Drinks",price:11,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:11,image:"Mask Group (1).png"});
 
-        // await mealModel.create({name:"Pizza",price:21,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:21,image:"Mask Group.png"});
+        // await mealModel.create({name:"Pizza",category:"Pizza",price:21,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:21,image:"Mask Group.png"});
 
-        // await mealModel.create({name:"Cheese Butter",price:7,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:7,image:"Mask Group (2).png"});
+        // await mealModel.create({name:"Cheese Butter",category:"Sandwiches",price:7,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:7,image:"Mask Group (2).png"});
 
-        // await mealModel.create({name:"Sandwich",price:12,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:12,image:"Mask Group (7).png"});
+        // await mealModel.create({name:"Sandwich",category:"Sandwiches",price:12,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:12,image:"Mask Group (7).png"});
 
-        // await mealModel.create({name:"Country Burger",price:24,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (5).png"});
+        // await mealModel.create({name:"Country Burger",category:"Burgers",price:24,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (5).png"});
 
-        // await mealModel.create({name:"Chicken Chup",price:28,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (6).png"});
+        // await mealModel.create({name:"Chicken Chup",category:"Sandwiches",price:28,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (6).png"});
 
     }catch(e){
         console.log(e);
