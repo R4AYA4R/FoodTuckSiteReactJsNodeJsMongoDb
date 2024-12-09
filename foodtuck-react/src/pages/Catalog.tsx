@@ -93,6 +93,28 @@ const Catalog = () => {
     })
 
 
+    // делаем еще функцию запроса для отображения числа товаров определенных фильтров и категорий без проверок и лимитов
+    // const {data:dataWithoutLimitAndChecks,refetch:refetchWithoutLimitAndChechs} = useQuery({
+    //     queryKey:['mealsWithoutLimitAndChecks'],
+    //     queryFn: async () => {
+
+    //         // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IMeal и указываем,что это массив
+    //         const response = await axios.get<IMeal[]>(`http://localhost:5000/api/getMealsCatalog?name=${inputSearchValue}`);
+
+    //         return response;
+    //     }
+    // })
+
+
+    const filteredCategoryBurgers = data?.allMeals.filter(m => m.category === 'Burgers'); // помещаем в переменную filteredCategoryBurgers массив allMeals(массив всех блюд без пагинации,который пришел от сервера),отфильтрованный с помощью filter(),фильтруем его по полю category со значением,в данном случае 'Burgers',то есть получаем массив блюд с категорией Burgers,чтобы отобразить количество блюд в этой категории
+
+    const filteredCategoryDrinks = data?.allMeals.filter(m => m.category === 'Drinks');
+
+    const filteredCategoryPizza = data?.allMeals.filter(m => m.category === 'Pizza');
+
+    const filteredCategorySandwiches = data?.allMeals.filter(m => m.category === 'Sandwiches');
+
+
     const OnChangeRangeLeft = (e: ChangeEvent<HTMLInputElement>) => {
 
         // если текущее значение ипнута с типом range больше,чем состояние для этого инпута с типом range(inputRightRangeValue),то есть больше,чем предыдущее состояние этого инпута(так как в inputRightRangeValue еще не записали значение e.target.value,поэтому inputRightRangeValue еще предыдущее),то изменяем размер(ширину) полоски до ползунка(кружочка у инпута с типом range),указываем + перед e.target.value,чтобы перевести значение этого инпута с типом range из строки(оно по дефолту идет строкой) в числовой тип данных
@@ -265,6 +287,9 @@ const Catalog = () => {
                                         <span className={filterCategories === 'Burgers' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                     </span>
                                     <p className="filterBlock__label-text">Burgers</p>
+
+                                    {/* если filterCategories !== '',то есть какая либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска),также если выбраны любые другие фильтры,тоже не показываем число товаров этой категории, или также если inputRightRangePrice меньше 100(то есть состояние цены правого инпута в ползунке для цены меньше 100,то есть пользователь указал фильтр цены) или inputLeftRangePrice > 0 то есть состояние цены левого инпута в ползунке для цены больше 0,то есть пользователь указал фильтр цены), то также не показываем число блюд в категориях,указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryBurgers?.length(массив блюд,отфильтрованный по полю category и значению 'Burgers',то есть категория бургеров) */}
+                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryBurgers?.length})</p>
                                 </label>
                                 <label className="filterBar__filterBlock-label" onClick={() => setFilterCategories('Drinks')}>
                                     <input type="radio" name="radio" className="filterBlock__label-input" />
@@ -272,6 +297,7 @@ const Catalog = () => {
                                         <span className={filterCategories === 'Drinks' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                     </span>
                                     <p className="filterBlock__label-text">Drinks</p>
+                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryDrinks?.length})</p>
                                 </label>
                                 <label className="filterBar__filterBlock-label" onClick={() => setFilterCategories('Pizza')}>
                                     <input type="radio" name="radio" className="filterBlock__label-input" />
@@ -279,6 +305,7 @@ const Catalog = () => {
                                         <span className={filterCategories === 'Pizza' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                     </span>
                                     <p className="filterBlock__label-text">Pizza</p>
+                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryPizza?.length})</p>
                                 </label>
                                 <label className="filterBar__filterBlock-label" onClick={() => setFilterCategories('Sandwiches')}>
                                     <input type="radio" name="radio" className="filterBlock__label-input" />
@@ -286,6 +313,7 @@ const Catalog = () => {
                                         <span className={filterCategories === 'Sandwiches' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                     </span>
                                     <p className="filterBlock__label-text">Sandwiches</p>
+                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategorySandwiches?.length})</p>
                                 </label>
                             </div>
 
@@ -339,47 +367,58 @@ const Catalog = () => {
                             </div>
 
                             <div className="sectionCatalog__main-filterBlock">
-                                <p className="filterBlock__text">Active Filters:</p>
+                                <div className="filterBlock__leftBlock">
+                                    <p className="filterBlock__text">Active Filters:</p>
 
-                                {/* если filterCategories не равно пустой строке,то показываем фильтр с текстом filterCategories,то есть выбран фильтр сортировки по категориям */}
-                                {filterCategories !== '' &&
+                                    
+                                    {/* если filterCategories не равно пустой строке,то показываем фильтр с текстом filterCategories,то есть выбран фильтр сортировки по категориям */}
+                                    {filterCategories !== '' &&
 
-                                    <div className="filterBlock__item">
+                                        <div className="filterBlock__item">
 
-                                        {/* если filterCaregories равно Burgers, то показывать текст Burgers */}
-                                        {filterCategories === 'Burgers' && 
+                                            {/* если filterCaregories равно Burgers, то показывать текст Burgers */}
+                                            {filterCategories === 'Burgers' && 
 
-                                            <p className="filterBlock__item-text">Burgers</p>
+                                                <p className="filterBlock__item-text">Burgers</p>
 
-                                        }
+                                            }
 
-                                        {filterCategories === 'Drinks' && 
+                                            {filterCategories === 'Drinks' && 
 
-                                            <p className="filterBlock__item-text">Drinks</p>
+                                                <p className="filterBlock__item-text">Drinks</p>
 
-                                        }
-                                        
-                                        {filterCategories === 'Pizza' && 
+                                            }
+                                            
+                                            {filterCategories === 'Pizza' && 
 
-                                            <p className="filterBlock__item-text">Pizza</p>
+                                                <p className="filterBlock__item-text">Pizza</p>
 
-                                        }
+                                            }
 
-                                        {filterCategories === 'Sandwiches' && 
+                                            {filterCategories === 'Sandwiches' && 
 
-                                            <p className="filterBlock__item-text">Sandwiches</p>
+                                                <p className="filterBlock__item-text">Sandwiches</p>
 
-                                        }
-                                        
-                                        {/* в onClick изменяем значение состояния filterCategories на пустую строку,то есть убираем фильтр по категориям */}
-                                        <button className="filterBlock__item-btn" onClick={()=>setFilterCategories('')}>
-                                            <img src="/images/sectionCatalog/X.png" alt="" className="filterBlock__item-img" />
-                                        </button>
-                                        
+                                            }
+                                            
+                                            {/* в onClick изменяем значение состояния filterCategories на пустую строку,то есть убираем фильтр по категориям */}
+                                            <button className="filterBlock__item-btn" onClick={()=>setFilterCategories('')}>
+                                                <img src="/images/sectionCatalog/X.png" alt="" className="filterBlock__item-img" />
+                                            </button>
+                                            
 
-                                    </div>
+                                        </div>
 
-                                }
+                                    }
+
+                                </div>
+
+                                <div className="filterBlock__amountItems">
+                                    {/* указываем значение этому тексту как data?.allMeals.length,то есть длину массива allMeals(массив всех блюд без пагинации),который приходит от сервера */}
+                                    <p className="filterBlock__amountItems-amount">{data?.allMeals.length}</p>
+
+                                    <p className="filterBlock__amountItems-text">Results found.</p>
+                                </div>
 
 
                             </div>

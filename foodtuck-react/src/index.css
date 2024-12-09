@@ -499,6 +499,17 @@ a {
     margin-left: 28px;
 }
 
+.filterBlock__label-amount{
+    font-size: 16px;
+    color: #808080;
+    opacity: 1; 
+    transition: opacity .5s ease;
+}
+
+.filterBlock__label-amountDisable{
+    opacity: 0;
+}
+
 .filterBar__filterBlock-label:hover .filterBlock__label-radioStyle {
     border: 1px solid #FF9F0D;
 }
@@ -709,7 +720,7 @@ a {
 }
 
 .sectionCatalog__main-topInput {
-    padding: 14px 46px 14px 20px;
+    padding: 15px 46px 15px 20px;
     background-color: rgba(255, 159, 13, 0.5);
     border: none;
     outline: none;
@@ -720,7 +731,7 @@ a {
 
 .sectionCatalog__topInputBlock-img {
     position: absolute;
-    top: 10px;
+    top: 12px;
     right: 10px;
 }
 
@@ -905,6 +916,13 @@ a {
     padding: 10px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.filterBlock__leftBlock{
+    display: flex;
+    align-items: center;
     gap: 30px;
 }
 
@@ -961,3 +979,20 @@ a {
     
 }
 
+.filterBlock__amountItems{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filterBlock__amountItems-amount{
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+}
+
+.filterBlock__amountItems-text{
+    font-size: 14px;
+    font-weight: 400;
+    color: #333333;
+}
