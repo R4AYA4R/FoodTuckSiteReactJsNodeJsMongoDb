@@ -93,19 +93,6 @@ const Catalog = () => {
     })
 
 
-    // делаем еще функцию запроса для отображения числа товаров определенных фильтров и категорий без проверок и лимитов
-    // const {data:dataWithoutLimitAndChecks,refetch:refetchWithoutLimitAndChechs} = useQuery({
-    //     queryKey:['mealsWithoutLimitAndChecks'],
-    //     queryFn: async () => {
-
-    //         // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IMeal и указываем,что это массив
-    //         const response = await axios.get<IMeal[]>(`http://localhost:5000/api/getMealsCatalog?name=${inputSearchValue}`);
-
-    //         return response;
-    //     }
-    // })
-
-
     const filteredCategoryBurgers = data?.allMeals.filter(m => m.category === 'Burgers'); // помещаем в переменную filteredCategoryBurgers массив allMeals(массив всех блюд без пагинации,который пришел от сервера),отфильтрованный с помощью filter(),фильтруем его по полю category со значением,в данном случае 'Burgers',то есть получаем массив блюд с категорией Burgers,чтобы отобразить количество блюд в этой категории
 
     const filteredCategoryDrinks = data?.allMeals.filter(m => m.category === 'Drinks');
