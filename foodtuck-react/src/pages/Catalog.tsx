@@ -9,6 +9,12 @@ import { getPagesArray } from "../utils/getPagesArray";
 
 const Catalog = () => {
 
+    const [onChangingInputLeftRange, setOnChangingInputLeftRange] = useState(false); // состояние для отслеживания изменения значения левого инпута с типом range у ползунка для фильтра цены,будем его изменять, когда будет меняться значение у левого инпута с типом range у ползунка для фильтра цены
+
+    const [onChangingInputRightRange, setOnChangingInputRightRange] = useState(false); // состояние для отслеживания изменения значения правого инпута с типом range у ползунка для фильтра цены,будем его изменять, когда будет меняться значение у правого инпута с типом range у ползунка для фильтра цены
+
+
+
     const [inputRightRangeValue, setInputRightRangeValue] = useState(0); // состояние для значения правого инпута с типом range,указываем начальное значение 124 в данном случае,чтобы изначально была заполнена вся полоска до ползунка у инпута с типом range
 
     const [inputRightRangeTrackWidth, setInputRightRangeTrackWidth] = useState(0); // состояние для ширины полоски до ползунка у инпута с типом range,указываем начальное значение 124 в данном случае,чтобы изначально была заполнена вся полоска до ползунка у инпута с типом range
@@ -61,6 +67,20 @@ const Catalog = () => {
             if (filterCategories !== '') {
 
                 url += `&category=${filterCategories}`;
+
+            }
+
+            // если состояние цены левого инпута с типом range у ползунка для фильтра цены больше 0,то добавляем этот query параметр к url со значением этого состояния левого инпута цены 
+            if (inputLeftRangePrice > 0) {
+
+                url += `&inputLeftRangePrice=${inputLeftRangePrice}`;
+
+            }
+
+            // если состояние цены правого инпута с типом range у ползунка для фильтра цены меньше 100,то добавляем этот query параметр к url со значением этого состояния правого инпута цены 
+            if (inputRightRangePrice < 100) {
+
+                url += `&inputRightRangePrice=${inputRightRangePrice}`;
 
             }
 
@@ -146,9 +166,17 @@ const Catalog = () => {
             setInputLeftRangeValue(+e.target.value); // изменяем состояние inputRightRangeValue(значение состояния инпута с типом range) на e.target.value, указываем + перед e.target.value,чтобы перевести значение этого инпута с типом range из строки(оно по дефолту идет строкой) в числовой тип данных
         }
 
-        console.log(inputRightRangeValue);
+
 
         setInputLeftRangePrice(+e.target.value * 0.404); // указываем значение состоянию цены для левого инпута с типом range(inputLeftRangePrice) как текущее значение этого инпута с типом range(e.target.value), также умножаем получившееся значение на 0.404,чтобы получить у этого правого инпута с типом range максимальное значение цены 50,делаем так,потому что ширина этого инпута 124 и минимальное изменение при смещении кружочка ползунка равно 1(типа 1 пикселю и в итоге получилось бы максимальное значение у инпута 124,а нам нужно 50),поэтому умножаем на 0.404(в данном случае просто подобрали примерно это число),чтобы уменьшить минимальное смещение этого инпута так,чтобы в итоге максимальным было 100, то есть в данном случае минимальное смещение у этого инпута было бы примерно 0.5 вместо 1
+
+
+
+        setOnChangingInputLeftRange(true); // изменяем значение состояния onChangingInputLeftRange на true,то есть отслеживаем,изменяет ли сейчас пользователь значение левого инпута с типом range у ползунка для фильтра цены
+
+
+        console.log(inputLeftRangePrice);
+
 
     }
 
@@ -197,11 +225,19 @@ const Catalog = () => {
             setInputRightRangeValue(+e.target.value); // изменяем состояние inputRightRangeValue(значение состояния инпута с типом range) на e.target.value, указываем + перед e.target.value,чтобы перевести значение этого инпута с типом range из строки(оно по дефолту идет строкой) в числовой тип данных
         }
 
-        console.log(inputRightRangeValue);
 
 
         setInputRightRangePrice((248 - +e.target.value) * 0.404); // указываем значение состоянию цены для левого инпута с типом range(inputLeftRangePrice) как 248(максимальное значение цены,которое должно быть в тексте на сайте, (в данном случае оно просто в два раза больше ширины инпута с типом range) ) - текущее значение этого инпута с типом range(e.target.value),чтобы от 248(в данном случае оно просто в два раза больше ширины инпута с типом range) отнималось текущее значение инпута с типом range при изменении текущего значения инпута с типом range,чтобы правильно показывалась цена, также умножаем получившееся значение на 0.404,чтобы получить у этого правого инпута с типом range максимальное значение цены 50,делаем так,потому что ширина этого инпута 124 и минимальное изменение при смещении кружочка ползунка равно 1(типа 1 пикселю и в итоге получилось бы максимальное значение у инпута 124,а нам нужно 50),поэтому умножаем на 0.404(в данном случае просто подобрали примерно это число),чтобы уменьшить минимальное смещение этого инпута так,чтобы в итоге максимальным было 100, то есть в данном случае минимальное смещение у этого инпута было бы примерно 0.5 вместо 1
+
+
+
+        setOnChangingInputRightRange(true); // изменяем значение состояния onChangingInputLeftRange на true,то есть отслеживаем,изменяет ли сейчас пользователь значение левого инпута с типом range у ползунка для фильтра цены
+
+
+        console.log(inputRightRangePrice);
     }
+
+
 
     // функция при изменении значения инпута поиска
     const inputSearchChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -228,6 +264,32 @@ const Catalog = () => {
     }, [data?.meals, page, inputSearchValue, filterCategories]);
 
 
+    // при изменении состояния onChangingInputLeftRange,то есть когда пользователь начал изменять значение левого инпута с типом range у ползунка для фильтра цены(то есть начал крутить левый ползунок для изменения фильтра цены),то делаем запрос на сервер на получение объектов блюд уже с новым фильтром цены,отслеживаем это,чтобы делать запрос на сервер только после того,как пользователь отпустил кнопку мыши при изменении значения инпута с типом range(то есть перестал тянуть ползунок для фильтра цены),если это не отслеживать,то будут лететь кучи запросов на сервер при изменении значения инпута с типом range для фильтра цены
+    useEffect(() => {
+
+        // если onChangingInputLeftRange false,то есть пользователь перестал крутить левый ползунок для изменения фильтра цены(в данном случае отслеживаем,когда пользователь отпустил кнопку мыши с этого ползунка)
+        if(!onChangingInputLeftRange){
+
+            refetch();  // делаем повторный запрос на получение блюд
+
+        }
+
+    }, [onChangingInputLeftRange])
+
+
+    // при изменении состояния onChangingInputRightRange,то есть когда пользователь начал изменять значение правого инпута с типом range у ползунка для фильтра цены(то есть начал крутить правый ползунок для изменения фильтра цены),то делаем запрос на сервер на получение объектов блюд уже с новым фильтром цены,отслеживаем это,чтобы делать запрос на сервер только после того,как пользователь отпустил кнопку мыши при изменении значения инпута с типом range(то есть перестал тянуть ползунок для фильтра цены),если это не отслеживать,то будут лететь кучи запросов на сервер при изменении значения инпута с типом range для фильтра цены
+    useEffect(() => {
+
+        // если onChangingInputRightRange false,то есть пользователь перестал крутить правый ползунок для изменения фильтра цены(в данном случае отслеживаем,когда пользователь отпустил кнопку мыши с этого ползунка)
+        if(!onChangingInputRightRange){
+
+            refetch();  // делаем повторный запрос на получение блюд
+
+        }
+
+    }, [onChangingInputRightRange])
+
+
     // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем filterCategory на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и делаем повторный запрос на сервер уже с измененным значение searchValue(чтобы поисковое число(число товаров,которое изменяется при поиске) показвалось правильно,когда вводят что-то в поиск)
     useEffect(() => {
 
@@ -240,7 +302,7 @@ const Catalog = () => {
 
         setPage(1);
 
-    }, [filterCategories])
+    }, [filterCategories, inputLeftRangePrice, inputRightRangePrice])
 
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
@@ -257,6 +319,33 @@ const Catalog = () => {
         if (page <= totalPages - 1) {
             setPage((prev) => prev + 1); // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
         }
+    }
+
+
+    // функция для кнопки удаления фильтра цены
+    const removePriceFilterBtn = () => {
+
+        setInputLeftRangePrice(0); // изменяем значение состояния цены левого инпута у ползунка для фильтра цены на 0,то есть первоначальное значение,то есть убираем фильтр цены
+
+        setInputLeftRangeTrackWidth(0); // изменяем состояние ширины левой полоски до ползунка(кружочка у инпута с типом range для фильтра цены) на 0,то есть возвращаем его в первоначальное значение когда убираем фильтр цены,чтобы эта полоска не показывалась
+
+        setInputLeftRangeValue(0); // изменяем состояние значения левого инпута с типом range в ползунке для фильтра цены,то есть возвращаем кружочек у левого инпута с типом range в ползунке для фильтра цены в первоначальное значение,чтобы этот кружочек не показывался,как будто есть фильтр цены
+
+
+        setInputRightRangePrice(100);  // изменяем значение состояния цены правого инпута у ползунка для фильтра цены на 100,то есть первоначальное значение,то есть убираем фильтр цены
+
+        setInputRightRangeTrackWidth(0); // изменяем состояние ширины правой полоски до ползунка(кружочка у инпута с типом range для фильтра цены) на 0,то есть возвращаем его в первоначальное значение когда убираем фильтр цены,чтобы эта полоска не показывалась
+
+        setInputRightRangeValue(0); // изменяем состояние значения правого инпута с типом range в ползунке для фильтра цены,то есть возвращаем кружочек у правого инпута с типом range в ползунке для фильтра цены в первоначальное значение,чтобы этот кружочек не показывался,как будто есть фильтр цены
+
+
+        // через 200 миллисекунд(0.2 секунды) делаем повторный запрос на сервер для получения блюд уже без фильтра цены,используем здесь setTimeout и указываем время,через которое выполнится функция,как 200 миллисекунд,чтобы успело обновиться состояние фильтра цены в коде выше,а только потом пошел повторный запрос на сервер,если не сделать эту задержку в виде 200 миллисекунд,то сделается повторный запрос на сервер с предыдущем значением состояния фильтра цены,так как состояние фильтра цены не успеет переобновиться
+        window.setTimeout(()=>{
+
+            refetch(); // делаем повторный запрос на сервер для получения блюд 
+
+        },200)
+
     }
 
     return (
@@ -309,14 +398,16 @@ const Catalog = () => {
 
                                 <div className="filterBlock__priceInputs">
 
-                                    <label className="filterBlock__priceInputs-blockInput" htmlFor="rangeLeft">
+                                    {/* этому label в onMouseUp(когда кнопку мыши отпустили) изменяем состояние onChangingInputLeftRange(состояние изменения левого ползунка у инпута с типом range для фильтра цены) на false,то есть когда пользователь перестал крутить ползунок и отпустил с него кнопку мыши,то изменяем это состояние на false */}
+                                    <label className="filterBlock__priceInputs-blockInput" htmlFor="rangeLeft" onMouseUp={() => setOnChangingInputLeftRange(false)}>
                                         <input id="rangeLeft" type="range" className="filterBlock__priceInputs-priceInput filterBlock__priceInputs-priceInputLeft" min="0" max="124" value={inputLeftRangeValue} onChange={OnChangeRangeLeft} />
 
                                         {/* указываем этому диву в style в width значение как у состояния inputRangeTrackWidth(то есть состояние для полоски до ползунка у инпута с типом range),потом в коде выше изменяем это значение,соответственно и изменяем ширину этого div элемента(полоски до ползунка у инпута с типом range) */}
                                         <div className="priceInputs__blockInput-trackInput priceInputs__blockInput-trackInputLeft" style={{ "width": `${inputLeftRangeTrackWidth}px` }} ref={inputLeftRangeRef} ></div>
                                     </label>
 
-                                    <label htmlFor="rangeRight" className="filterBlock__priceInputs-blockInput filterBlock__priceInputs-blockInputRight">
+                                    {/* этому label в onMouseUp(когда кнопку мыши отпустили) изменяем состояние OnChangingInputRightRange(состояние изменения правого ползунка у инпута с типом range для фильтра цены) на false,то есть когда пользователь перестал крутить ползунок и отпустил с него кнопку мыши,то изменяем это состояние на false */}
+                                    <label htmlFor="rangeRight" className="filterBlock__priceInputs-blockInput filterBlock__priceInputs-blockInputRight"  onMouseUp={() => setOnChangingInputRightRange(false)}>
                                         <input id="rangeRight" type="range" className="filterBlock__priceInputs-priceInput filterBlock__priceInputs-priceInputRight" min="0" max="124" value={inputRightRangeValue} onChange={OnChangeRangeRight} />
 
                                         {/* указываем этому диву в style в width значение как у состояния inputLeftRangeTrackWidth(то есть состояние для полоски до ползунка у левого инпута с типом range),потом в коде выше изменяем это значение,соответственно и изменяем ширину этого div элемента(полоски до ползунка у инпута с типом range) */}
@@ -357,44 +448,63 @@ const Catalog = () => {
                                 <div className="filterBlock__leftBlock">
                                     <p className="filterBlock__text">Active Filters:</p>
 
-                                    
+
                                     {/* если filterCategories не равно пустой строке,то показываем фильтр с текстом filterCategories,то есть выбран фильтр сортировки по категориям */}
                                     {filterCategories !== '' &&
 
                                         <div className="filterBlock__item">
 
                                             {/* если filterCaregories равно Burgers, то показывать текст Burgers */}
-                                            {filterCategories === 'Burgers' && 
+                                            {filterCategories === 'Burgers' &&
 
                                                 <p className="filterBlock__item-text">Burgers</p>
 
                                             }
 
-                                            {filterCategories === 'Drinks' && 
+                                            {filterCategories === 'Drinks' &&
 
                                                 <p className="filterBlock__item-text">Drinks</p>
 
                                             }
-                                            
-                                            {filterCategories === 'Pizza' && 
+
+                                            {filterCategories === 'Pizza' &&
 
                                                 <p className="filterBlock__item-text">Pizza</p>
 
                                             }
 
-                                            {filterCategories === 'Sandwiches' && 
+                                            {filterCategories === 'Sandwiches' &&
 
                                                 <p className="filterBlock__item-text">Sandwiches</p>
 
                                             }
-                                            
+
                                             {/* в onClick изменяем значение состояния filterCategories на пустую строку,то есть убираем фильтр по категориям */}
-                                            <button className="filterBlock__item-btn" onClick={()=>setFilterCategories('')}>
+                                            <button className="filterBlock__item-btn" onClick={() => setFilterCategories('')}>
                                                 <img src="/images/sectionCatalog/X.png" alt="" className="filterBlock__item-img" />
                                             </button>
-                                            
+
 
                                         </div>
+
+                                    }
+
+
+                                    {/* если состояние цены правого ипнута у ползунка для фильтра цены не равно 100,то есть не равно первоначальному значению, или если состояние цены левого ипнута у ползунка для фильтра цены не равно 0,то есть не равно первоначальному значению, то есть пользователь выбрал фильтр цены,то показываем его,в данном случае делаем условие именно таким образом(после условия ставим знак вопроса ? (то есть если условие выполняется), а потом ниже в коде ставим двоеточие : (то есть в противоположном случае,если это условие не выполняется) и пустую строку '' (то есть не показываем ничего) ),иначе не работает правильно условие */}
+                                    {inputRightRangePrice < 100 || inputLeftRangePrice > 0 ?
+
+                                        <div className="filterBlock__item">
+
+                                            {/* указываем значение этому тексту для фильтра цены, от значения состояния цены левого инпута у ползунка для фильтра цены(inputLeftRangePrice) до значения состояния цены правого инпута у ползунка для фильтра цены(inputRightRangePrice),указываем toFixed(0),чтобы значения чисел были с 0 знаков после запятой,то есть без знаков после запятой */}
+                                            <p className="filterBlock__item-text">Price: {`$${inputLeftRangePrice.toFixed(0)} - $${inputRightRangePrice.toFixed(0)}`}</p>
+
+
+                                            {/* в onClick указываем нашу функцию для удаления фильтра цены */}
+                                            <button className="filterBlock__item-btn" onClick={removePriceFilterBtn}>
+                                                <img src="/images/sectionCatalog/X.png" alt="" className="filterBlock__item-img" />
+                                            </button>
+                                        </div>
+                                        : ''
 
                                     }
 
