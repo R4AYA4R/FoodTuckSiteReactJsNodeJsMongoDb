@@ -7,4 +7,6 @@ router.get('/getMeals',mealController.getMeals); // описываем get за�
 
 router.get('/getMealsCatalog',mealController.getMealsCatalog); // описываем get запрос на сервере для получения блюд для каталога
 
+router.get('/getMealsCatalog/:id',mealController.getMealId); // описываем get запрос на сервере для получения объекта блюда по id,указываем этот динамический параметр id через : (двоеточие) в url к этому эндпоинту
+
 export default router;

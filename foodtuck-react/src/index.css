@@ -996,3 +996,35 @@ a {
     font-weight: 400;
     color: #333333;
 }
+
+
+.innerForLoader{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    
+}
+
+.loader{
+
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px dashed #3589c2;
+    animation: rotate 1s infinite ease;
+}
+
+@keyframes rotate {
+    0%{
+
+        transform:rotate(0deg) scale(1);
+
+    }
+
+    100%{
+
+        transform:rotate(360deg) scale(1.2);
+
+    }
+}
