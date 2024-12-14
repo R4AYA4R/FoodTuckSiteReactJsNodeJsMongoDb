@@ -1058,6 +1058,7 @@ a {
     padding-bottom: 32px;
     border-bottom: 1px solid #E0E0E0;
     margin-bottom: 32px;
+    color: #4F4F4F;
 }
 
 .sectionProductItemPage__rightBlock-price{
@@ -1172,4 +1173,74 @@ a {
     100%{
         transform:translateX(0);
     }
+}
+
+
+.sectionProductItemPage__descBlock{
+    margin: 56px 0;
+}
+
+.descBlock__tabs{
+    display: flex;
+    align-items: center;
+}
+
+.descBlock__tabs-btn{
+    font-size: 16px;
+    font-weight: 400;
+    color: #333333;
+    padding: 13px 42px;
+    border: none;
+    background-color: #fff;
+    transition:all .5s ease;
+}
+
+.descBlock__tabs-btn:hover{
+    cursor: pointer;
+    background-color: rgba(255, 159, 13,0.6);
+}
+
+.descBlock__tabs-btn--active{
+    background-color: #FF9F0D;
+    color: #fff;
+}
+
+.descBlock__desc{
+    padding: 32px 0 100px;
+}
+
+.descBlock__desc-text{
+    color: #828282;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 24px;
+}
+
+.benefitsBlock__title{
+    font-size: 18px;
+    font-weight: 400;
+    color: #4F4F4F;
+    margin-bottom: 16px;
+}
+
+.benefitsBlock__list-item{
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.benefitsBlock__item-img{
+    max-width: 16px;
+}
+
+.benefitsBlock__item-text{
+    font-size: 16px;
+    font-weight: 400;
+    color: #4F4F4F;
+}
+
+.descBlock__descInner{
+    animation: appear 1s ease forwards;
 }
