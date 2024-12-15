@@ -7,6 +7,12 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 const ProductItemPage = () => {
 
+    const [activeForm, setActiveForm] = useState(false);
+
+    const [activeStarsForm,setActiveStarsForm] = useState(0);
+
+    const [errorForm,setErrorForm] = useState('');
+
     const [tab, setTab] = useState('Desc');
 
     const [inputAmountValue, setInputAmountValue] = useState(1);
@@ -89,6 +95,15 @@ const ProductItemPage = () => {
         }
 
     }, [inputAmountValue, data?.data])
+
+
+    const submitFormHandler = () => {
+
+
+
+        setActiveForm(false);
+
+    }
 
     return (
         <main className="main">
@@ -173,12 +188,79 @@ const ProductItemPage = () => {
                                     </div>
                                 }
 
-                                {tab === 'Reviews' && 
+                                {tab === 'Reviews' &&
 
                                     <div className="descBlock__descInner">
-                                        <p>Reviews</p>
+
+                                        <div className="descBlock__reviews">
+                                            <div className="descBlock__reviews-leftBlock">
+
+                                                {/* <div className="reviews__leftBlock-item">
+                                                    <div className="reviews__item-topBlock">
+                                                        <div className="reviews__item-topBlock--leftInfo">
+                                                            <img src="/images/sectionProductItemPage/Profile.png" alt="" className="reviews__item-img" />
+                                                            <div className="reviews__item-topBlock--info">
+                                                                <p className="reviews__item-name">Name</p>
+                                                                <div className="sectionProductItemPage__rightBlock__stars">
+                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src="/images/sectionCatalog/StarGrey.png" alt="" className="sectionProductItemPage__stars-GreyImg reviews__item-star" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <p className="reviews__item-createdTimeText">20.10.2023</p>
+                                                    </div>
+                                                    <p className="reviews__item-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc orci tellus, fermentum nec imperdiet sed, pulvinar et sem, Fusce hendrerit faucibus sollicitudin. </p>
+                                                </div> */}
+
+                                                <div className="reviews__leftBlock-top">
+                                                    <h4 className="reviews__top-text">No reviews yet.</h4>
+                                                </div>
+
+                                            </div>
+                                            <div className="descBlock__reviews-rightBlock">
+
+                                                <div className={activeForm ? "reviews__rightBlock-btnBlock reviews__btnBlock-none" : "reviews__rightBlock-btnBlock"}>
+                                                    <button className="reviews__btnBlock-btn" onClick={() => setActiveForm(true)}>Add Review</button>
+                                                </div>
+
+                                                <div className={activeForm ? "reviews__rightBlock-form reviews__rightBlock-form--active" : "reviews__rightBlock-form"}>
+                                                    <div className="reviews__form-topBlock">
+                                                        <div className="form__topBlock-userBlock">
+                                                            <img src="/images/sectionProductItemPage/Profile.png" alt="" className="form__userBlock-img" />
+                                                            <p className="reviews__item-name reviews__form-name">Name</p>
+                                                        </div>
+                                                        <div className="form__topBlock-starsBlock">
+                                                            {/* если activeStarsForm равно 0,то показываем серую картинку звездочки,в другом случае оранжевую,также по клику на эту картинку изменяем состояние activeStarsForm на 1,то есть на 1 звезду */}
+                                                            <img src={activeStarsForm === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(1)}/>
+
+                                                            {/* если activeStarsForm больше или равно 2,то показывать оранжевую звезду,в другом случае серую */}
+                                                            <img src={activeStarsForm >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(2)}/>
+                                                            <img src={activeStarsForm >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(3)}/>
+                                                            <img src={activeStarsForm >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(4)}/>
+                                                            <img src={activeStarsForm >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-GreyImg reviews__form-star" onClick={()=>setActiveStarsForm(5)}/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="reviews__form-mainBlock">
+                                                        <textarea className="form__mainBlock-textarea" placeholder="Enter your comment"></textarea>
+
+                                                        {/* если errorForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
+                                                        {errorForm !== '' && <p className="formErrorText">{errorForm}</p>}
+                                                        
+
+                                                        <button className="reviews__form-btn" onClick={submitFormHandler}>Save Review</button>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
                                     </div>
-                                    
+
                                 }
 
                             </div>

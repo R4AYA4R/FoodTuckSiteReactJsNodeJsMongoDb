@@ -1244,3 +1244,143 @@ a {
 .descBlock__descInner{
     animation: appear 1s ease forwards;
 }
+
+
+.descBlock__reviews{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 20px;
+}
+
+.reviews__item-topBlock--leftInfo{
+    display: flex;
+    gap:10px;
+    align-items: center;
+}
+
+.reviews__item-topBlock{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.reviews__item-name{
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+}
+
+.reviews__item-star{
+    max-width: 16px;
+}
+
+.reviews__item-createdTimeText{
+    font-size: 14px;
+    font-weight: 400;
+    color: #828282;
+}
+
+.reviews__item-text{
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #4f4f4f;
+}
+
+.reviews__rightBlock-btnBlock{
+    display: flex;
+    justify-content: end;
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+
+.reviews__btnBlock-none{
+    opacity: 0;
+}
+
+.reviews__btnBlock-btn{
+    padding: 10px 20px;
+    background-color: #FF9F0D;
+    color: #fff;
+    border: none;
+    font-family: 'Inter',sans-serif;
+    font-weight: 500;
+    opacity: 1;
+    transition:opacity 1s ease;
+}
+
+.reviews__btnBlock-btn:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+
+.reviews__rightBlock-form{
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 1s ease;
+}
+
+.reviews__rightBlock-form--active{
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reviews__form-topBlock{
+    display: flex;
+    align-items: center;
+    gap:50px;
+    margin-bottom: 15px;
+}
+
+.form__topBlock-userBlock{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reviews__form-name{
+    font-size: 18px;
+    margin-bottom: 3px;
+}
+
+.reviews__form-star{
+    max-width: 18px;
+    opacity: 1;
+    transition: opacity .5s ease;
+}
+
+.reviews__form-star:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.form__mainBlock-textarea{
+    padding: 15px 15px 20px 15px;
+    outline: none;
+    resize: none; /* убираем возможность изменять размер textarea */
+    width: 100%;
+    border: 1px solid #adadad;
+    margin-bottom: 10px;
+}
+
+.formErrorText{
+    margin-bottom: 10px;
+    color: #EE5858;
+}
+
+.reviews__form-btn{
+    border: none;
+    background-color: #35b901;
+    padding: 10px 20px;
+    font-family: 'Inter',sans-serif;
+    color: #fff;
+    font-weight: 500;
+    opacity: 1;
+    transition: opacity .5s ease;
+}
+
+.reviews__form-btn:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
