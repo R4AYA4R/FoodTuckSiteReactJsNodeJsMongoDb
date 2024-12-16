@@ -3,15 +3,26 @@ import SectionProductItemTop from "../components/SectionProductItemTop";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { IMeal } from "../types/types";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useIsOnCreen } from "../hooks/useIsOnScreen";
+import SectionMenu from "../components/SectionMenu";
 
 const ProductItemPage = () => {
 
+    // в данном случае скопировали эти useRef из другого компонента,а html  элементу section дали такой же id и такие же классы(кроме одного класса нового sectionProductItemPage),так как анимация появления этой секции такая же,как и в другом компоненте,работает все нормально с одинаковыми id для IntersectionObserver(так как секции в разное время срабатывают,пока пользователь доскроллит(докрутит сайт) до определенной секции,а также эти секции на разных страницах )
+    const sectionImportantFoodRef = useRef(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef, указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnCreen(sectionImportantFoodRef); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+
     const [activeForm, setActiveForm] = useState(false);
 
-    const [activeStarsForm,setActiveStarsForm] = useState(0);
+    const [activeStarsForm, setActiveStarsForm] = useState(0);
 
-    const [errorForm,setErrorForm] = useState('');
+    const [errorForm, setErrorForm] = useState('');
+
+    const [textFormArea, setTextFormArea] = useState('');
+
 
     const [tab, setTab] = useState('Desc');
 
@@ -99,16 +110,36 @@ const ProductItemPage = () => {
 
     const submitFormHandler = () => {
 
+        // если значение textarea (.trim()-убирает из строки пробелы,чтобы нельзя было ввести только пробел) в форме комментария будет по количеству символов меньше или равно 10,то будем изменять состояние ErrorCommentsForm(то есть показывать ошибку и не отправлять комментарий),в другом случае очищаем поля textarea,activeStars(рейтинг,который пользователь указал в форме) и убираем форму
+        if (textFormArea.trim().length <= 10) {
 
+            setErrorForm('Comment must be more than 10 characters');
 
-        setActiveForm(false);
+        } else if (activeStarsForm === 0) {
+            // если состояние рейтинга в форме равно 0,то есть пользователь не указал рейтинг,то показываем ошибку
+            setErrorForm('Enter rating');
+        } else {
+
+            const date = new Date(); // создаем объект на основе класса Date(класс в javaScript для работы с датой и временем)
+
+            // помещаем в переменную showTime значение времени,когда создаем комментарий, date.getDate() - показывает текущее число календаря, getMonth() - считает месяцы с нуля(январь нулевой,февраль первый и тд),поэтому указываем date.getMonth() + 1(увеличиваем на 1 и получаем текущий месяц) и потом приводим получившееся значение к формату строки с помощью toString(), getFullYear() - показывает текущий год,потом эту переменную showTime будем сохранять в объект для создания комментария на сервере и потом показывать дату создания комментария уже на клиенте(в данном случае на этой странице у комментария) 
+            const showTime = date.getDate() + '.' + (date.getMonth() + 1).toString() + '.' + date.getFullYear();
+
+            // здесь будем делать запрос на сервер на создание комментария
+
+            setTextFormArea('');
+            setActiveStarsForm(0);
+            setActiveForm(false);
+            setErrorForm('');
+        }
+
 
     }
 
     return (
         <main className="main">
             <SectionProductItemTop meal={data?.data} />
-            <section className="sectionProductItemPage">
+            <section id="sectionImportantFood" className={onScreen.sectionImportantFoodIntersecting ? "sectionImportantFood sectionImportantFood__active sectionProductItemPage" : "sectionImportantFood sectionProductItemPage"} ref={sectionImportantFoodRef}>
                 <div className="container">
                     <div className="sectionProductItemPage__inner">
                         <div className="sectionProductItemPage__top">
@@ -190,12 +221,10 @@ const ProductItemPage = () => {
 
                                 {tab === 'Reviews' &&
 
-                                    <div className="descBlock__descInner">
+                                    <div className="descBlock__reviews">
+                                        <div className="descBlock__reviews-leftBlock">
 
-                                        <div className="descBlock__reviews">
-                                            <div className="descBlock__reviews-leftBlock">
-
-                                                {/* <div className="reviews__leftBlock-item">
+                                            {/* <div className="reviews__leftBlock-item">
                                                     <div className="reviews__item-topBlock">
                                                         <div className="reviews__item-topBlock--leftInfo">
                                                             <img src="/images/sectionProductItemPage/Profile.png" alt="" className="reviews__item-img" />
@@ -215,55 +244,57 @@ const ProductItemPage = () => {
                                                     <p className="reviews__item-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc orci tellus, fermentum nec imperdiet sed, pulvinar et sem, Fusce hendrerit faucibus sollicitudin. </p>
                                                 </div> */}
 
-                                                <div className="reviews__leftBlock-top">
-                                                    <h4 className="reviews__top-text">No reviews yet.</h4>
-                                                </div>
-
+                                            <div className="reviews__leftBlock-top">
+                                                <h4 className="reviews__top-text">No reviews yet.</h4>
                                             </div>
-                                            <div className="descBlock__reviews-rightBlock">
 
-                                                <div className={activeForm ? "reviews__rightBlock-btnBlock reviews__btnBlock-none" : "reviews__rightBlock-btnBlock"}>
-                                                    <button className="reviews__btnBlock-btn" onClick={() => setActiveForm(true)}>Add Review</button>
-                                                </div>
-
-                                                <div className={activeForm ? "reviews__rightBlock-form reviews__rightBlock-form--active" : "reviews__rightBlock-form"}>
-                                                    <div className="reviews__form-topBlock">
-                                                        <div className="form__topBlock-userBlock">
-                                                            <img src="/images/sectionProductItemPage/Profile.png" alt="" className="form__userBlock-img" />
-                                                            <p className="reviews__item-name reviews__form-name">Name</p>
-                                                        </div>
-                                                        <div className="form__topBlock-starsBlock">
-                                                            {/* если activeStarsForm равно 0,то показываем серую картинку звездочки,в другом случае оранжевую,также по клику на эту картинку изменяем состояние activeStarsForm на 1,то есть на 1 звезду */}
-                                                            <img src={activeStarsForm === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(1)}/>
-
-                                                            {/* если activeStarsForm больше или равно 2,то показывать оранжевую звезду,в другом случае серую */}
-                                                            <img src={activeStarsForm >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(2)}/>
-                                                            <img src={activeStarsForm >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(3)}/>
-                                                            <img src={activeStarsForm >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={()=>setActiveStarsForm(4)}/>
-                                                            <img src={activeStarsForm >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-GreyImg reviews__form-star" onClick={()=>setActiveStarsForm(5)}/>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="reviews__form-mainBlock">
-                                                        <textarea className="form__mainBlock-textarea" placeholder="Enter your comment"></textarea>
-
-                                                        {/* если errorForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
-                                                        {errorForm !== '' && <p className="formErrorText">{errorForm}</p>}
-                                                        
-
-                                                        <button className="reviews__form-btn" onClick={submitFormHandler}>Save Review</button>
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
                                         </div>
+                                        <div className="descBlock__reviews-rightBlock">
 
+                                            <div className={activeForm ? "reviews__rightBlock-btnBlock reviews__btnBlock-none" : "reviews__rightBlock-btnBlock"}>
+                                                <button className="reviews__btnBlock-btn" onClick={() => setActiveForm(true)}>Add Review</button>
+                                            </div>
+
+                                            <div className={activeForm ? "reviews__rightBlock-form reviews__rightBlock-form--active" : "reviews__rightBlock-form"}>
+                                                <div className="reviews__form-topBlock">
+                                                    <div className="form__topBlock-userBlock">
+                                                        <img src="/images/sectionProductItemPage/Profile.png" alt="" className="form__userBlock-img" />
+                                                        <p className="reviews__item-name reviews__form-name">Name</p>
+                                                    </div>
+                                                    <div className="form__topBlock-starsBlock">
+                                                        {/* если activeStarsForm равно 0,то показываем серую картинку звездочки,в другом случае оранжевую,также по клику на эту картинку изменяем состояние activeStarsForm на 1,то есть на 1 звезду */}
+                                                        <img src={activeStarsForm === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={() => setActiveStarsForm(1)} />
+
+                                                        {/* если activeStarsForm больше или равно 2,то показывать оранжевую звезду,в другом случае серую */}
+                                                        <img src={activeStarsForm >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={() => setActiveStarsForm(2)} />
+                                                        <img src={activeStarsForm >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={() => setActiveStarsForm(3)} />
+                                                        <img src={activeStarsForm >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__form-star" onClick={() => setActiveStarsForm(4)} />
+                                                        <img src={activeStarsForm >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-GreyImg reviews__form-star" onClick={() => setActiveStarsForm(5)} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="reviews__form-mainBlock">
+                                                    <textarea className="form__mainBlock-textarea" placeholder="Enter your comment" value={textFormArea} onChange={(e) => setTextFormArea(e.target.value)}></textarea>
+
+                                                    {/* если errorForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
+                                                    {errorForm !== '' && <p className="formErrorText">{errorForm}</p>}
+
+
+                                                    <button className="reviews__form-btn" onClick={submitFormHandler}>Save Review</button>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
                                     </div>
+
 
                                 }
 
                             </div>
+
+                            <SectionMenu />
+
                         </div>
                     </div>
                 </div>

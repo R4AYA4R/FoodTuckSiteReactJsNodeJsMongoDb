@@ -190,7 +190,7 @@ a {
 }
 
 .sectionImportantFood {
-    margin: 195px 0 160px 0;
+    margin-bottom: 120px;
     opacity: 0;
     transition: all 1s ease;
     transform: translateX(-50%);
@@ -275,10 +275,6 @@ a {
     display: flex;
     align-items: center;
     gap: 70px;
-}
-
-.sectionMenu {
-    margin-bottom: 200px;
 }
 
 .sectionMenu__title {
@@ -1206,7 +1202,7 @@ a {
 }
 
 .descBlock__desc{
-    padding: 32px 0 100px;
+    padding-top:32px;
 }
 
 .descBlock__desc-text{
@@ -1243,8 +1239,13 @@ a {
 
 .descBlock__descInner{
     animation: appear 1s ease forwards;
+    padding-bottom: 70px;
 }
 
+.descBlock__reviews{
+    animation: appear 1s ease forwards;
+    padding-bottom: 30px;
+}
 
 .descBlock__reviews{
     display: grid;
@@ -1290,12 +1291,10 @@ a {
 .reviews__rightBlock-btnBlock{
     display: flex;
     justify-content: end;
-    opacity: 1;
-    transition: opacity 1s ease;
 }
 
 .reviews__btnBlock-none{
-    opacity: 0;
+    display: none;
 }
 
 .reviews__btnBlock-btn{
@@ -1324,6 +1323,7 @@ a {
 .reviews__rightBlock-form--active{
     opacity: 1;
     transform: translateX(0);
+    margin-bottom: 20px;
 }
 
 .reviews__form-topBlock{
