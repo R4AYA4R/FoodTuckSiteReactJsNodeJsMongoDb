@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import SectionProductItemTop from "../components/SectionProductItemTop";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -27,6 +27,8 @@ const ProductItemPage = () => {
     const [tab, setTab] = useState('Desc');
 
     const [inputAmountValue, setInputAmountValue] = useState(1);
+
+    const { pathname } = useLocation(); // берем pathname(url страницы) из useLocation()
 
     const params = useParams(); // с помощью useParams получаем параметры из url (в данном случае id товара)
 
@@ -106,6 +108,22 @@ const ProductItemPage = () => {
         }
 
     }, [inputAmountValue, data?.data])
+
+
+    // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны
+    useEffect(()=>{
+
+        setActiveStarsForm(0);
+
+        setActiveForm(false);
+
+        setTab('Desc');
+
+        setInputAmountValue(1);
+
+        refetch();
+
+    },[pathname])
 
 
     const submitFormHandler = () => {

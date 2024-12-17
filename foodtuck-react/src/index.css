@@ -1384,3 +1384,104 @@ a {
     cursor: pointer;
     opacity: 0.7;
 }
+
+.sectionSignUp__inner{
+    padding: 50px 0 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sectionSignUp__signUpBlock{
+    border: 1px solid #E0E0E0;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.signUpBlock__tabs{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+
+.signUpBlock__tabs-btn{
+    background-color: #fff;
+    border: none;
+    padding: 15px 20px;
+    font-family: 'Inter',sans-serif;
+    font-size: 20px;
+    opacity: 1;
+    transition:all .5s ease;
+}
+
+.signUpBlock__tabs-btn:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.signUpBlock__tabs-btn--active{
+    border-bottom: 1px solid #FF9F0D;
+    font-weight: 500;
+}
+
+.signUpBlock__signInMain{
+    padding: 32px;
+    animation: appear 1s ease forwards;
+}
+
+.signInMain__inputEmailBlock-input,
+.signInMain__inputPassBlock-input{
+    padding: 10px 36px 10px 40px;
+    border: 1px solid #E0E0E0;
+    outline: none;
+    color: #4f4f4f;
+    font-family: 'Inter',sans-serif;
+    margin-bottom: 16px;
+    width: 100%;
+}   
+
+.signInMain__inputEmailBlock,
+.signInMain__inputPassBlock{
+    position: relative;
+}
+
+.signInMain__inputEmailBlock-img,
+.signInMain__inputPassBlock-img{
+    position: absolute;
+    top: 6px;
+    left: 10px;
+}
+
+.signInMain__inputPassBlock-HideImg{
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    opacity: 1;
+    transition:opacity .5s ease;
+}
+
+.signInMain__inputPassBlock-HideImg:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.signInMain__inputEmailBlock-input::placeholder,
+.signInMain__inputPassBlock-input::placeholder{
+    color: #4f4f4f;
+}
+
+.signInMain__btn{
+    margin-top: 16px;
+    padding: 10px 150px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    border: none;
+    opacity: 1;
+    transition:opacity .5s ease;
+    background-color: #FF9F0D;
+    font-family: 'Inter',sans-serif;
+}
+
+.signInMain__btn:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
