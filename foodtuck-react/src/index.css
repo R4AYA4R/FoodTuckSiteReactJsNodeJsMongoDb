@@ -1367,6 +1367,7 @@ a {
 .formErrorText{
     margin-bottom: 10px;
     color: #EE5858;
+    max-width: 300px;
 }
 
 .reviews__form-btn{

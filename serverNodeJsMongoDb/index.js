@@ -14,6 +14,7 @@ import mongoose from 'mongoose'; // импортируем mongoose,для уп�
 import mealModel from './models/mealModel.js';
 import router from './router/router.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
+import roleModel from './models/roleModel.js';
 
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
@@ -58,6 +59,11 @@ const start = async () => {
         // await mealModel.create({name:"Country Burger",category:"Burgers",price:24,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (5).png"});
 
         // await mealModel.create({name:"Chicken Chup",category:"Sandwiches",price:28,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (6).png"});
+
+        // создаем объект в базе данных у сущности(таблицы) roleModel(сущности роли) с полем value и значением "USER" для роли пользователя,также ниже создаем роль для админа,делаем это 1 раз и потом этот код закомментируем
+        // await roleModel.create({value:"USER"});
+
+        // await roleModel.create({value:"ADMIN"});
 
     }catch(e){
         console.log(e);
