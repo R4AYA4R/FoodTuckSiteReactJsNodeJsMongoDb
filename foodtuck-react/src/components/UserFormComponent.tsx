@@ -38,7 +38,7 @@ const UserFormComponent = () => {
     const [errorSignUpForm, setErrorSignUpForm] = useState('');
 
 
-    const { registrationForUser } = useActions(); // берем action registrationForUser и другие для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { registrationForUser, loginForUser } = useActions(); // берем action registrationForUser и другие для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
 
 
     // функция для регистрации
@@ -68,6 +68,28 @@ const UserFormComponent = () => {
     }
 
 
+    // функция для логина
+    const login = async (email:string,password:string) => {
+
+        try{
+
+            const response = await AuthService.login(email,password); // вызываем нашу функцию login() у AuthService,передаем туда email и password,если запрос прошел успешно,то в ответе от сервера будут находиться токены и поле user с объектом пользователя(с полями userName,email,id,role),их и помещаем в переменную response
+
+            console.log(response);
+
+            loginForUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
+
+        }catch(e:any){
+
+            console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
+
+            setErrorSignInForm(e.response?.data?.message + '. Fill in all fields correctly'); // помещаем в состояние ошибки формы логина текст ошибки,которая пришла от сервера(в данном случае еще и допольнительный текст)
+
+        }
+
+    }
+
+
     const onSubmitSignInForm = () => {
 
         // если инпут почты includes('.') false(то есть инпут почты не включает в себя .(точку)) или значение инпута почты по количеству символов меньше 5,то показываем ошибку
@@ -79,7 +101,7 @@ const UserFormComponent = () => {
 
             setErrorSignInForm(''); // указываем значение состоянию ошибки пустую строку,то есть убираем ошибку,если она была
 
-            // здесь делаем запрос на сервер для логина
+            login(inputEmailSignIn,inputPasswordSignIn); // вызываем нашу функцию авторизации и передаем туда состояния инпутов почты и пароля
 
         }
 
