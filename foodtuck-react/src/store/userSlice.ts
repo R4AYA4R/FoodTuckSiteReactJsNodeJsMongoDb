@@ -1,30 +1,30 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AuthResponse, IUser, IUserInitialState } from "../types/types";
 
-const initialState:IUserInitialState = {
+const initialState: IUserInitialState = {
 
-    user:{} as IUser, // указываем поле user и даем ей значение объекта с типом как наш IUser 
+    user: {} as IUser, // указываем поле user и даем ей значение объекта с типом как наш IUser 
 
-    isAuth:false, // переменная для проверки,авторизован пользователь или нет
+    isAuth: false, // переменная для проверки,авторизован пользователь или нет
 
-    isLoading:false // переменная для проверки загрузки
+    isLoading: false // переменная для проверки загрузки
 
 }
 
 
 // создаем и экспортируем slice(то есть редьюсер)
 export const userSlice = createSlice({
-    name:'userSlice', // указываем название этого slice
+    name: 'userSlice', // указываем название этого slice
 
     initialState, // указываем дефолтное состояние слайса(можно было написать initialState:initialState,но так как названия поля и значения совпадают,то можно записать просто initialState)
 
     // создаем здесь actions,которые потом смогут изменять состояние redux toolkit
-    reducers:{
+    reducers: {
 
         // в параметре функции можно указать состояние(state) и action payload(данные,которые будем передавать этому action при вызове его в другом файле),указываем тип action payload(второму параметру этого action) PayloadAction и указываем в generic какой тип данных будем передавать потом при вызове этого action,в данном случае в payload передаем объект response(ответ от сервера) с типом на основе нашего интерфейса AuthResponse,который пришел от сервера
-        registrationForUser:(state,action:PayloadAction<AuthResponse>)=>{
+        registrationForUser: (state, action: PayloadAction<AuthResponse>) => {
 
-            localStorage.setItem('token',action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу
+            localStorage.setItem('token', action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу
 
             state.isAuth = true; // изменяем поле isAuth этого класса на true,так как уже авторизованы
 
@@ -33,9 +33,9 @@ export const userSlice = createSlice({
         },
 
         // можно было сделать один action(функцию,чтобы изменить состояние в redux toolkit),чтобы изменять состояние пользователя в redux toolkit при регистрации,логине и проверке на accessToken и refreshToken(то есть для функции checkAuth),но в данном случае сделали уже разные,хотя код одинаковый
-        loginForUser:(state,action:PayloadAction<AuthResponse>) => {
+        loginForUser: (state, action: PayloadAction<AuthResponse>) => {
 
-            localStorage.setItem('token',action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу на сервер
+            localStorage.setItem('token', action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу на сервер
 
             state.isAuth = true; // изменяем поле isAuth у состояния на true,так как уже авторизованы
 
@@ -43,9 +43,9 @@ export const userSlice = createSlice({
 
         },
 
-        checkAuthUser:(state,action:PayloadAction<AuthResponse>) => {
+        checkAuthUser: (state, action: PayloadAction<AuthResponse>) => {
 
-            localStorage.setItem('token',action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу на сервер
+            localStorage.setItem('token', action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу на сервер
 
             state.isAuth = true; // изменяем поле isAuth у состояния на true,так как уже авторизованы
 
@@ -53,8 +53,18 @@ export const userSlice = createSlice({
 
         },
 
+        logoutUser: (state) => {
+
+            localStorage.removeItem('token'); // удаляем accessToken из localStorage по ключу token
+
+            state.isAuth = false; // изменяем поле isAuth этого класса на false,так как уже вышли из аккаунта
+
+            state.user = {} as IUser; // изменяем поле user этого класса на пустой объект и указываем,что он нашего типа IUser,так как уже вышли из аккаунта
+
+        },
+
         // указываем тип данных для action payload как PayloadAction и в generic потом указываем тип boolean(так как мы будем передавать потом в этот action параметр типа true или false)
-        setLoadingUser:(state,action:PayloadAction<boolean>) => {
+        setLoadingUser: (state, action: PayloadAction<boolean>) => {
 
             state.isLoading = action.payload; // изменяем поле isLoading у этого состояния на action.payload(данные,которые передадим этой функции потом при вызове,в данном случае будем передавать true или false,чтобы указать,что сейчас идет загрузка)
 

@@ -111,6 +111,16 @@ class UserService{
 
     }
 
+
+    // функция для выхода из аккаунта,параметром принимает refreshToken 
+    async logout(refreshToken){
+
+        const token = await tokenService.removeToken(refreshToken); // удаляем refreshToken из базы данных,вызывая нашу функцию removeToken(),передавая в параметре refreshToken
+
+        return token; // возвращаем токен(в данном случае это будет удаленный объект из базы данных с таким значением refreshToken как и в параметре этой функции logout, но в данном случае возвращается не сам удаленный объект токена из базы данных, а объект с полем deletedCount и значением 1,типа был удален объект)
+
+    }
+
 }
 
 export default new UserService(); // экспортируем уже объект на основе нашего класса UserService

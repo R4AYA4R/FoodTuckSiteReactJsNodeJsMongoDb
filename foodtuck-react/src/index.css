@@ -1486,3 +1486,82 @@ a {
     cursor: pointer;
     opacity: 0.7;
 }
+
+.sectionUserPage{
+    padding: 30px 0 120px;
+}
+
+.sectionUserPage__inner{
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap:50px;
+}
+
+.sectionUserPage__leftBar{
+    border: 1px solid #E0E0E0;
+    padding: 24px 0 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.leftBar__menu-item{
+    display: flex;
+    align-items: center;
+    gap:10px;
+    color: #808080;
+    padding: 15px 15px 15px 25px;
+    width: 100%;
+    text-align: left;
+    transition:all .5s ease;
+    opacity: 1;
+}
+
+.leftBar__menu-btn{
+    background-color: transparent;
+    border: none;
+    color: #808080;
+    font-size: 16px;
+    font-family: 'Inter',sans-serif;
+    transition:all .5s ease;
+}
+
+.leftBar__menu-item--active{
+    background-color: #FF9F0D;
+    color: #fff;
+}
+
+.leftBar__menu-item--active .leftBar__menu-btn{
+    color: #fff;
+}
+
+.leftBar__menu-item:hover{
+    cursor: pointer;
+    background-color: #FF9F0D;
+    opacity: 0.7;
+    color: #fff;
+}
+
+.leftBar__menu-item:hover .leftBar__menu-btn{
+    color: #fff;
+}
+
+
+.leftBar__menu-btn:hover{
+    cursor: pointer;
+}
+
+/* указываем обычные стили при наведении(:hover) для класса активной кнопки leftBar__menu-btn--active,чтобы не работал эффект изменения прозрачности(opacity) для активной кнопки(если она активна сейчас) при наведении( :hover) */
+.leftBar__menu-item--active:hover{
+    cursor: pointer;
+    opacity:1;
+    color: #fff;
+}
+
+.leftBar__menu-btnLogout{
+    text-align: left;
+}
+
+.sectionUserPage__mainBlock-inner{
+    animation: appear 1s ease forwards; 
+}
