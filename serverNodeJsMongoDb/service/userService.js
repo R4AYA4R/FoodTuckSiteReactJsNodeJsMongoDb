@@ -6,6 +6,8 @@ import userModel from "../models/userModel.js";
 import bcrypt from 'bcrypt'; // импортируем bcrypt для хеширования пароля(в данном случае импортируем вручную)
 import tokenService from "./tokenService.js";
 
+import commentModel from "../models/commentModel.js";
+
 // создаем класс UserService для сервиса пользователей(их удаление,добавление и тд)
 class UserService{
 

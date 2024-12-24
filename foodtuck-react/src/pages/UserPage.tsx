@@ -9,6 +9,7 @@ import axios from "axios";
 import { AuthResponse } from "../types/types";
 import { API_URL } from "../http/http";
 import AuthService from "../service/AuthService";
+import { useLocation } from "react-router-dom";
 
 const UserPage = () => {
 
@@ -16,7 +17,7 @@ const UserPage = () => {
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
-    const { setLoadingUser, checkAuthUser,logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { setLoadingUser, checkAuthUser, logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
@@ -68,7 +69,7 @@ const UserPage = () => {
     const logout = async () => {
 
         // оборачиваем в try catch,чтобы отлавливать ошибки 
-        try{
+        try {
 
             const response = await AuthService.logout(); // вызываем нашу функцию logout() у AuthService
 
@@ -76,7 +77,7 @@ const UserPage = () => {
 
             setTab('Dashboard'); // изменяем состояние таба на dashboard то есть показываем секцию dashboard(в данном случае главный отдел пользователя),чтобы при выходе из аккаунта и входе обратно у пользователя был открыт главный отдел аккаунта,а не настройки или последний отдел,который пользователь открыл до выхода из аккаунта
 
-        }catch(e:any){
+        } catch (e: any) {
 
             console.log(e.reponse?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
 
@@ -145,7 +146,12 @@ const UserPage = () => {
 
                             {tab === 'Dashboard' &&
                                 <div className="sectionUserPage__mainBlock-inner">
-                                    userPage userEmail:{user.email}
+                                    <div className="sectionUserPage__dashboard">
+                                        <img src="/images/sectionUserPage/Ellipse 5.png" alt="" className="dashboard__img" />
+                                        <h3 className="dashboard__name">{user.userName}</h3>
+                                        <p className="dashboard__email">{user.email}</p>
+                                        <button className="dashboard__btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
+                                    </div>
                                 </div>
                             }
 
