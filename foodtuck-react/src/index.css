@@ -1275,6 +1275,10 @@ a {
     max-width: 16px;
 }
 
+.reviews__leftBlock-item{
+    margin-bottom: 30px;
+}
+
 .reviews__item-createdTimeText{
     font-size: 14px;
     font-weight: 400;

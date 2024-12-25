@@ -1,13 +1,17 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SectionProductItemTop from "../components/SectionProductItemTop";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IMeal } from "../types/types";
+import { IComment, IMeal } from "../types/types";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
 import SectionMenu from "../components/SectionMenu";
+import { API_URL } from "../http/http";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 
 const ProductItemPage = () => {
+
+    const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
     // в данном случае скопировали эти useRef из другого компонента,а html  элементу section дали такой же id и такие же классы(кроме одного класса нового sectionProductItemPage),так как анимация появления этой секции такая же,как и в другом компоненте,работает все нормально с одинаковыми id для IntersectionObserver(так как секции в разное время срабатывают,пока пользователь доскроллит(докрутит сайт) до определенной секции,а также эти секции на разных страницах )
     const sectionImportantFoodRef = useRef(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef, указываем в useRef null,так как используем typeScript
@@ -32,6 +36,8 @@ const ProductItemPage = () => {
 
     const params = useParams(); // с помощью useParams получаем параметры из url (в данном случае id товара)
 
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния user,используя наш типизированный хук для useSelector
+
     const { data, refetch } = useQuery({
         queryKey: ['getMealById'],
         queryFn: async () => {
@@ -41,6 +47,34 @@ const ProductItemPage = () => {
 
             return response;
         }
+    })
+
+    const { data: dataComments, refetch: refetchComments } = useQuery({
+        queryKey: ['commentsForProduct'],
+        queryFn: async () => {
+
+            // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productIdFor со значением id товара на этой странице
+            const response = await axios.get<IComment[]>(`${API_URL}/getCommentsForProduct?productNameFor=${data?.data.name}`);
+
+            return response;
+        }
+    })
+
+    // функция для post запроса на сервер с помощью useMutation(react query),создаем комментарий на сервере,берем mutate у useMutation,чтобы потом вызвать эту функцию запроса на сервер в нужный момент
+    const { mutate } = useMutation({
+        mutationKey: ['create comment'],
+        mutationFn: async (comment: IComment) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IComment),но здесь не обязательно указывать тип
+            await axios.post<IComment>(`${API_URL}/createComment`, comment);
+
+        },
+
+        // при успешной мутации переобновляем массив комментариев
+        onSuccess() {
+            refetchComments();
+        }
+
     })
 
     const [totalPriceProduct, setTotalPriceProduct] = useState(data?.data.price);
@@ -111,7 +145,7 @@ const ProductItemPage = () => {
 
 
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны
-    useEffect(()=>{
+    useEffect(() => {
 
         setActiveStarsForm(0);
 
@@ -123,8 +157,28 @@ const ProductItemPage = () => {
 
         refetch();
 
-    },[pathname])
+    }, [pathname])
 
+    // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара
+    useEffect(() => {
+
+        refetchComments();
+
+    }, [data?.data, dataComments?.data])
+
+
+    const addCommentsBtn = () => {
+
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то показываем форму,в другом случае перекидываем пользователя на страницу авторизации 
+        if (user.userName) {
+
+            setActiveForm(true); // изменяем состояние активной формы,то есть показываем форму для создания комментария
+
+        } else {
+            router('/userPage');  // перекидываем пользователя на страницу авторизации (/userPage в данном случае)
+        }
+
+    }
 
     const submitFormHandler = () => {
 
@@ -143,7 +197,13 @@ const ProductItemPage = () => {
             // помещаем в переменную showTime значение времени,когда создаем комментарий, date.getDate() - показывает текущее число календаря, getMonth() - считает месяцы с нуля(январь нулевой,февраль первый и тд),поэтому указываем date.getMonth() + 1(увеличиваем на 1 и получаем текущий месяц) и потом приводим получившееся значение к формату строки с помощью toString(), getFullYear() - показывает текущий год,потом эту переменную showTime будем сохранять в объект для создания комментария на сервере и потом показывать дату создания комментария уже на клиенте(в данном случае на этой странице у комментария) 
             const showTime = date.getDate() + '.' + (date.getMonth() + 1).toString() + '.' + date.getFullYear();
 
-            // здесь будем делать запрос на сервер на создание комментария
+            // если data?.data true,то есть данные блюда(товара) есть,в данном случае делаем эту проверку,так как выдает ошибку,что data?.data._id может быть undefined
+            if (data?.data) {
+
+                mutate({ name: user.userName, text: textFormArea, rating: activeStarsForm, productNameFor: data?.data.name, createdTime: showTime } as IComment);  // вызываем функцию post запроса на сервер,создавая комментарий,разворачивая в объект нужные поля для комментария и давая этому объекту тип as IComment(вручную не указываем id,чтобы он автоматически создавался на сервере), указываем поле productIdFor со значением как у id товара на этой странице,чтобы в базе данных связать этот товар с комментарием
+
+            }
+
 
             setTextFormArea('');
             setActiveStarsForm(0);
@@ -196,7 +256,7 @@ const ProductItemPage = () => {
                         <div className="sectionProductItemPage__descBlock">
                             <div className="descBlock__tabs">
                                 <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Desc')}>Description</button>
-                                <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Reviews')}>Reviews (0)</button>
+                                <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Reviews')}>Reviews ({dataComments?.data.length})</button>
                             </div>
                             <div className="descBlock__desc">
 
@@ -242,42 +302,47 @@ const ProductItemPage = () => {
                                     <div className="descBlock__reviews">
                                         <div className="descBlock__reviews-leftBlock">
 
-                                            {/* <div className="reviews__leftBlock-item">
+                                            {/* если dataComments?.data.length true(то есть длина массива комментариев true,то есть комментарии есть),то показываем комментарии,в другом случае показываем текст,что комментариев нет */}
+                                            {dataComments?.data.length ? dataComments?.data.map(comment =>
+
+                                                <div className="reviews__leftBlock-item" key={comment._id}>
                                                     <div className="reviews__item-topBlock">
                                                         <div className="reviews__item-topBlock--leftInfo">
                                                             <img src="/images/sectionProductItemPage/Profile.png" alt="" className="reviews__item-img" />
                                                             <div className="reviews__item-topBlock--info">
-                                                                <p className="reviews__item-name">Name</p>
+                                                                <p className="reviews__item-name">{comment.name}</p>
                                                                 <div className="sectionProductItemPage__rightBlock__stars">
-                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
-                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
-                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
-                                                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
-                                                                    <img src="/images/sectionCatalog/StarGrey.png" alt="" className="sectionProductItemPage__stars-GreyImg reviews__item-star" />
+                                                                    <img src={comment.rating === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src={comment.rating >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src={comment.rating >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"}  alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src={comment.rating >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"}  alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src={comment.rating >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"}  alt="" className="sectionProductItemPage__stars-GreyImg reviews__item-star" />
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <p className="reviews__item-createdTimeText">20.10.2023</p>
+                                                        <p className="reviews__item-createdTimeText">{comment.createdTime}</p>
                                                     </div>
-                                                    <p className="reviews__item-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc orci tellus, fermentum nec imperdiet sed, pulvinar et sem, Fusce hendrerit faucibus sollicitudin. </p>
-                                                </div> */}
+                                                    <p className="reviews__item-text">{comment.text}</p>
+                                                </div>
+                                            ) :
+                                                <div className="reviews__leftBlock-top">
+                                                    <h4 className="reviews__top-text">No reviews yet.</h4>
+                                                </div>
 
-                                            <div className="reviews__leftBlock-top">
-                                                <h4 className="reviews__top-text">No reviews yet.</h4>
-                                            </div>
+                                            }
 
                                         </div>
                                         <div className="descBlock__reviews-rightBlock">
 
                                             <div className={activeForm ? "reviews__rightBlock-btnBlock reviews__btnBlock-none" : "reviews__rightBlock-btnBlock"}>
-                                                <button className="reviews__btnBlock-btn" onClick={() => setActiveForm(true)}>Add Review</button>
+                                                <button className="reviews__btnBlock-btn" onClick={addCommentsBtn}>Add Review</button>
                                             </div>
 
                                             <div className={activeForm ? "reviews__rightBlock-form reviews__rightBlock-form--active" : "reviews__rightBlock-form"}>
                                                 <div className="reviews__form-topBlock">
                                                     <div className="form__topBlock-userBlock">
                                                         <img src="/images/sectionProductItemPage/Profile.png" alt="" className="form__userBlock-img" />
-                                                        <p className="reviews__item-name reviews__form-name">Name</p>
+                                                        <p className="reviews__item-name reviews__form-name">{user.userName}</p>
                                                     </div>
                                                     <div className="form__topBlock-starsBlock">
                                                         {/* если activeStarsForm равно 0,то показываем серую картинку звездочки,в другом случае оранжевую,также по клику на эту картинку изменяем состояние activeStarsForm на 1,то есть на 1 звезду */}

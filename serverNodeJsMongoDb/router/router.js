@@ -12,6 +12,11 @@ router.get('/getMealsCatalog',mealController.getMealsCatalog); // описыва
 router.get('/getMealsCatalog/:id',mealController.getMealId); // описываем get запрос на сервере для получения объекта блюда по id,указываем этот динамический параметр id через : (двоеточие) в url к этому эндпоинту
 
 
+router.post('/createComment',userController.createComment); // создаем post запрос на создание комментария в базе данных
+
+router.get('/getCommentsForProduct',userController.getCommentsForProduct); // создаем get запрос на получение комментариев для определенного товара
+
+
 router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min:3,max:32}),
