@@ -14,11 +14,11 @@ const ProductsItem = ({meal}:IProductsItemProps) => {
         <div className="products__item" onClick={()=>router(`/catalog/${meal._id}`)}>
             <img src={`/images/sectionMenu/${meal.image}`} alt="" className="products__item-img" />
             <div className="products__item-stars">
-                <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                <img src="/images/sectionCatalog/StarGrey.png" alt="" className="products__stars-imgGrey" />
+                <img src={meal.rating === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="products__stars-imgYellow" />
+                <img src={meal.rating >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow" />
+                <img src={meal.rating >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow" />
+                <img src={meal.rating >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow" />
+                <img src={meal.rating >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgGrey" />
             </div>
             <p className="products__item-text">{meal.name}</p>
             <p className="products__item-price">${meal.price}.00</p>

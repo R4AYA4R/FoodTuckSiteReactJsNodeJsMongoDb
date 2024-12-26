@@ -77,6 +77,24 @@ const ProductItemPage = () => {
 
     })
 
+    const { mutate: mutateRating } = useMutation({
+        mutationKey: ['updateRatingProduct'],
+        mutationFn: async (meal: IMeal) => {
+
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IMeal),но здесь не обязательно указывать тип
+            await axios.put<IMeal>(`${API_URL}/updateProductRating`, meal);
+
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем данные товара
+        onSuccess() {
+
+            refetch();
+
+        }
+
+    })
+
     const [totalPriceProduct, setTotalPriceProduct] = useState(data?.data.price);
 
 
@@ -167,6 +185,23 @@ const ProductItemPage = () => {
     }, [data?.data, dataComments?.data])
 
 
+    // при запуске этого компонента(при загрузке этой страницы),а также при изменении массива комментариев,будем обновлять рейтинг товара(блюда в данном случае)
+    useEffect(() => {
+
+        const commentsRating = dataComments?.data.reduce((prev, curr) => prev + curr.rating, 0); // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
+
+        // если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.data.length true(этот массив отфильтрованных комментариев для товара на этой странице есть),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
+        if (commentsRating && dataComments?.data) {
+
+            const commentsRatingMiddle = commentsRating / dataComments?.data.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.data.length(длину массива комментариев)
+
+            mutateRating({ ...data?.data, rating: commentsRatingMiddle } as IMeal); // делаем запрос на изменение рейтинга у товара(в данном случае блюда),разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IMeal(в данном случае делаем это,так как выдает ошибку,что id может быть undefined)
+
+        }
+
+    }, [dataComments?.data])
+
+
     const addCommentsBtn = () => {
 
         // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то показываем форму,в другом случае перекидываем пользователя на страницу авторизации 
@@ -229,11 +264,18 @@ const ProductItemPage = () => {
                                 <p className="sectionProductItemPage__rightBlock__text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque diam pellentesque bibendum non dui volutpat fringilla bibendum. Urna, urna, vitae feugiat pretium donec id elementum. Ultrices mattis sed vitae mus risus. Lacus nisi, et ac dapibus sit eu velit in consequat.</p>
                                 <p className="sectionProductItemPage__rightBlock-price">{totalPriceProduct}$</p>
                                 <div className="sectionProductItemPage__rightBlock__stars">
-                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img" />
-                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img" />
-                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img" />
-                                    <img src="/images/sectionCatalog/StarYellow.png" alt="" className="sectionProductItemPage__stars-img" />
-                                    <img src="/images/sectionCatalog/StarGrey.png" alt="" className="sectionProductItemPage__stars-GreyImg" />
+
+                                    {/* если data?.data true,то есть данные о товаре на текущей странице есть(делаем эту проверку,потому что без нее ошибка,типа data?.data может быть undefined),и в src у элементов img(картинок) указываем условие,какую звезду рейтинга отображать в зависимости от значения рейтинга товара */}
+                                    {data?.data &&
+                                        <>
+                                            <img src={data?.data.rating === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="sectionProductItemPage__stars-img" />
+                                            <img src={data?.data.rating >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img" />
+                                            <img src={data?.data.rating >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img" />
+                                            <img src={data?.data.rating >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img" />
+                                            <img src={data?.data.rating >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-GreyImg" />
+                                        </>
+                                    }
+
                                 </div>
                                 <div className="sectionProductItemPage__rightBlock-bottomBlock">
                                     <div className="sectionProductItemPage__bottomBlock-inputBlock">
@@ -314,9 +356,9 @@ const ProductItemPage = () => {
                                                                 <div className="sectionProductItemPage__rightBlock__stars">
                                                                     <img src={comment.rating === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
                                                                     <img src={comment.rating >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
-                                                                    <img src={comment.rating >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"}  alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
-                                                                    <img src={comment.rating >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"}  alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
-                                                                    <img src={comment.rating >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"}  alt="" className="sectionProductItemPage__stars-GreyImg reviews__item-star" />
+                                                                    <img src={comment.rating >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src={comment.rating >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-img reviews__item-star" />
+                                                                    <img src={comment.rating >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="sectionProductItemPage__stars-GreyImg reviews__item-star" />
                                                                 </div>
                                                             </div>
                                                         </div>

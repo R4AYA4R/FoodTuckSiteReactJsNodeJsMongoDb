@@ -4,6 +4,7 @@ import userModel from "../models/userModel.js";
 import ApiError from "../exceptions/ApiError.js";
 import userService from "../service/userService.js";
 import commentModel from "../models/commentModel.js";
+import mealModel from "../models/mealModel.js";
 
 // создаем класс для UserController,где будем описывать функции для эндпоинтов
 class UserController{
@@ -136,6 +137,30 @@ class UserController{
             console.log(comments)
 
             return res.json(comments); // возвращаем эти комментарии на фронтенд
+
+        }catch(e){
+
+            next(e); // вызываем функцию next()(параметр этой функции registration) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции registration,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+
+        }
+
+    }
+
+    async updateProductRating(req,res,next){
+
+        // оборачиваем в блок try catch,чтобы отлавливать ошибки
+        try{
+            
+            const product = req.body;  // достаем(деструктуризируем) из тела запроса весь объект запроса со всеми полями,которые мы передали с фронтенда(не используем здесь деструктуризацию типа деструктурировать из req.body {product} в квадратных скобках,так как просто берем все тело запроса,то есть весь объект тела запроса,а не отдельные поля)
+
+            const productFounded = await mealModel.findById(product._id);  // находим товар по _id(указываем нижнее подчеркивание _ перед id,так как id объектов в базе данных mongodb по дефолту указываются с нижним подчеркиванием),который равен _id у product(то есть весь объект тела запроса)
+
+            productFounded.rating = product.rating; // изменяем поле rating у найденного объекта товара в базе данных(productFounded) на значение поля rating у product(объект тела запроса)
+
+            await productFounded.save(); // сохраняем обновленный объект товара в базе данных
+
+            return res.json(productFounded); // возвращаем обновленный товар на фронтенд
+
 
         }catch(e){
 

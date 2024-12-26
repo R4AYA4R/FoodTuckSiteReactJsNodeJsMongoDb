@@ -315,7 +315,6 @@ a {
 
 .meals__item:hover {
     opacity: 0.7;
-    ;
 }
 
 .meals__item-leftBlock {
@@ -326,7 +325,6 @@ a {
 .meals__info-title {
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 7px;
     color: #333333;
 }
 
@@ -848,6 +846,14 @@ a {
 }
 
 
+.products__starsMealsItem-img{
+    max-width: 16px;
+}
+
+.products__item-starsMeals{
+    margin:3px 0;
+}
+
 .sectionCatalog__main-pagination{
     margin-top: 56px;
     display: flex;
@@ -1250,7 +1256,7 @@ a {
 .descBlock__reviews{
     display: grid;
     grid-template-columns: repeat(2,1fr);
-    gap: 20px;
+    gap: 50px;
 }
 
 .reviews__item-topBlock--leftInfo{
