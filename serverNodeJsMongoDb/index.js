@@ -52,13 +52,13 @@ const start = async () => {
 
         // await mealModel.create({name:"Pizza",category:"Pizza",price:21,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:21,image:"Mask Group.png"});
 
-        // await mealModel.create({name:"Cheese Butter",category:"Sandwiches",price:7,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:7,image:"Mask Group (2).png"});
+        // await mealModel.create({name:"Cheese Butter",category:"Sandwiches",price:7,priceFilter:"Under $10",amount:1,rating:0,totalPrice:7,image:"Mask Group (2).png"});
 
         // await mealModel.create({name:"Sandwich",category:"Sandwiches",price:12,priceFilter:"$10-$20",amount:1,rating:0,totalPrice:12,image:"Mask Group (7).png"});
 
         // await mealModel.create({name:"Country Burger",category:"Burgers",price:24,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (5).png"});
 
-        // await mealModel.create({name:"Chicken Chup",category:"Sandwiches",price:28,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:24,image:"Mask Group (6).png"});
+        // await mealModel.create({name:"Chicken Chup",category:"Sandwiches",price:28,priceFilter:"$20-$30",amount:1,rating:0,totalPrice:28,image:"Mask Group (6).png"});
 
         // создаем объект в базе данных у сущности(таблицы) roleModel(сущности роли) с полем value и значением "USER" для роли пользователя,также ниже создаем роль для админа,делаем это 1 раз и потом этот код закомментируем
         // await roleModel.create({value:"USER"});

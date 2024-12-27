@@ -13,7 +13,7 @@ const UserFormComponent = () => {
 
     const [tabForm, setTabForm] = useState('Sign In');
 
-    const [inputTypePasswordHide, setInputTypePasswordHide] = useState(false);
+    const [inputTypePasswordHide, setInputTypePasswordHide] = useState(true);
 
     const [inputEmailSignIn, setInputEmailSignIn] = useState('');
 

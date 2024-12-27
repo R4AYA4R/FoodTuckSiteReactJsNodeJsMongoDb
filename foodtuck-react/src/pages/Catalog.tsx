@@ -41,7 +41,7 @@ const Catalog = () => {
 
     const [selectBlockActive, setSelectBlockActive] = useState(false);
 
-    const [selectBlockValue, setSelectBlockValue] = useState('');
+    const [selectBlockValue, setSelectBlockValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
 
     const [filterCategories, setFilterCategories] = useState('');
 
@@ -88,6 +88,12 @@ const Catalog = () => {
 
             }
 
+            // если selectBlockValue(состояние для сортировки товаров) не равно пустой строке,то добавляем к url еще параметры sort и order в которые передаем значения,в параметр sort передаем название поля,по которому будет сортировка объектов из базы данных(в данном случае указываем значение состояния selectBlockValue,в нем хранится название поля,и это значение мы приводим к нижнему регистру букв с помощью toLowerCase(),чтобы в названии поля были все маленькие буквы,мы это обрабатываем на бэкэнде в node js),а в параметр order указываем значение -1(то есть сортировка по убыванию,от большего к меньшему)
+            if(selectBlockValue !== ''){
+
+                url += `&sortBy=${selectBlockValue.toLowerCase()}`;
+
+            }
 
             // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IResponseCatalog,у этого объекта будут поля meals(объекты блюд из базы данных для отдельной страници пагинации) и allMeals(все объекты блюд из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации),вместо url будет подставлено значение,которое есть у нашей переменной url
             const response = await axios.get<IResponseCatalog>(url, {
@@ -271,7 +277,7 @@ const Catalog = () => {
 
         refetch();  // делаем повторный запрос на получение товаров при изменении data?.meals, inputSearchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
 
-    }, [data?.meals, page, inputSearchValue, filterCategories]);
+    }, [data?.meals, page, inputSearchValue, filterCategories,selectBlockValue]);
 
 
     // при изменении состояния onChangingInputLeftRange,то есть когда пользователь начал изменять значение левого инпута с типом range у ползунка для фильтра цены(то есть начал крутить левый ползунок для изменения фильтра цены),то делаем запрос на сервер на получение объектов блюд уже с новым фильтром цены,отслеживаем это,чтобы делать запрос на сервер только после того,как пользователь отпустил кнопку мыши при изменении значения инпута с типом range(то есть перестал тянуть ползунок для фильтра цены),если это не отслеживать,то будут лететь кучи запросов на сервер при изменении значения инпута с типом range для фильтра цены
@@ -326,7 +332,7 @@ const Catalog = () => {
 
         setPage(1);
 
-    }, [filterCategories, inputLeftRangePrice, inputRightRangePrice])
+    }, [filterCategories, inputLeftRangePrice, inputRightRangePrice,selectBlockValue])
 
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
@@ -560,6 +566,20 @@ const Catalog = () => {
 
                                     }
 
+                                    {/* если selectBlockValue не равно пустой строке,то показываем текст сортировки */}
+                                    {selectBlockValue !== '' &&
+
+                                        <div className="filterBlock__item">
+                                            <p className="filterBlock__item-text">Sort By: {selectBlockValue}</p>
+
+                                            {/* в onClick указываем значение selectBlockValue на пустую строку,то есть убираем фильтр сортировки товаров */}
+                                            <button className="filterBlock__item-btn" onClick={() => setSelectBlockValue('')}>
+                                                <img src="/images/sectionCatalog/X.png" alt="" className="filterBlock__item-img" />
+                                            </button>
+                                        </div>
+
+                                    }
+
                                 </div>
 
                                 <div className="filterBlock__amountItems">
@@ -584,11 +604,11 @@ const Catalog = () => {
 
                                     }
 
-                                </div> 
+                                </div>
                                 : isFetching ? <div className="innerForLoader">
                                     <div className="loader"></div>
-                                </div> 
-                                : <h4 className="products__notFoundText">Not found</h4>
+                                </div>
+                                    : <h4 className="products__notFoundText">Not found</h4>
                             }
 
                             {/* до этого использовали это, пока не сделали лоадер */}
