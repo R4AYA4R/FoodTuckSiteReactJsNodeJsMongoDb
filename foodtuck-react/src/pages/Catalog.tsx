@@ -422,8 +422,8 @@ const Catalog = () => {
                                     </span>
                                     <p className="filterBlock__label-text">Burgers</p>
 
-                                    {/* если filterCategories !== '',то есть какая либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска),также если выбраны любые другие фильтры,тоже не показываем число товаров этой категории, или также если inputRightRangePrice меньше 100(то есть состояние цены правого инпута в ползунке для цены меньше 100,то есть пользователь указал фильтр цены) или inputLeftRangePrice > 0 то есть состояние цены левого инпута в ползунке для цены больше 0,то есть пользователь указал фильтр цены), то также не показываем число блюд в категориях,указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryBurgers?.length(массив блюд,отфильтрованный по полю category и значению 'Burgers',то есть категория бургеров) */}
-                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryBurgers?.length})</p>
+                                    {/* если filterCategories !== '',то есть какая либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска),также если выбраны любые другие фильтры,тоже не показываем число товаров этой категории, или также если inputRightRangePrice меньше maxPriceMeal(то есть состояние цены правого инпута в ползунке для цены меньше максимальной цены блюда из всех,то есть пользователь указал фильтр цены) или inputLeftRangePrice > 0 то есть состояние цены левого инпута в ползунке для цены больше 0,то есть пользователь указал фильтр цены), то также не показываем число блюд в категориях,указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryBurgers?.length(массив блюд,отфильтрованный по полю category и значению 'Burgers',то есть категория бургеров) */}
+                                    <p className={filterCategories !== '' || inputRightRangePrice < maxPriceMeal || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryBurgers?.length})</p>
                                 </label>
                                 <label className="filterBar__filterBlock-label" onClick={() => setFilterCategories('Drinks')}>
                                     <input type="radio" name="radio" className="filterBlock__label-input" />
@@ -431,7 +431,7 @@ const Catalog = () => {
                                         <span className={filterCategories === 'Drinks' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                     </span>
                                     <p className="filterBlock__label-text">Drinks</p>
-                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryDrinks?.length})</p>
+                                    <p className={filterCategories !== '' || inputRightRangePrice < maxPriceMeal || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryDrinks?.length})</p>
                                 </label>
                                 <label className="filterBar__filterBlock-label" onClick={() => setFilterCategories('Pizza')}>
                                     <input type="radio" name="radio" className="filterBlock__label-input" />
@@ -439,7 +439,7 @@ const Catalog = () => {
                                         <span className={filterCategories === 'Pizza' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                     </span>
                                     <p className="filterBlock__label-text">Pizza</p>
-                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryPizza?.length})</p>
+                                    <p className={filterCategories !== '' || inputRightRangePrice < maxPriceMeal || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategoryPizza?.length})</p>
                                 </label>
                                 <label className="filterBar__filterBlock-label" onClick={() => setFilterCategories('Sandwiches')}>
                                     <input type="radio" name="radio" className="filterBlock__label-input" />
@@ -447,7 +447,7 @@ const Catalog = () => {
                                         <span className={filterCategories === 'Sandwiches' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                     </span>
                                     <p className="filterBlock__label-text">Sandwiches</p>
-                                    <p className={filterCategories !== '' || inputRightRangePrice < 100 || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategorySandwiches?.length})</p>
+                                    <p className={filterCategories !== '' || inputRightRangePrice < maxPriceMeal || inputLeftRangePrice > 0 ? "filterBlock__label-amount filterBlock__label-amountDisable" : "filterBlock__label-amount"}>({filteredCategorySandwiches?.length})</p>
                                 </label>
                             </div>
 

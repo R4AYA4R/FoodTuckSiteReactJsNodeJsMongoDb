@@ -1616,3 +1616,97 @@ a {
     cursor: pointer;
     opacity: 0.7;
 }
+
+.sectionCart__inner{
+    padding: 120px 0;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap:30px;
+}
+
+.sectionCart__table{
+    border: 1px solid #E0E0E0;
+    border-radius: 6px;
+    padding: 20px 0 0 20px;
+}
+
+.sectionCart__table-names{
+    display: grid;
+    grid-template-columns:3fr 1fr 1fr 1fr 0.5fr;
+    padding-bottom: 20px;
+}
+
+.sectionCart__table-name{
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+}
+
+.sectionCart__bill{
+    border: 1px solid #E0E0E0;
+    border-radius: 6px;
+}
+
+.bill__topBlock{
+    padding: 20px 20px 9px 20px;
+}
+
+.sectionCart__bill-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.bill__item-text{
+    font-size: 16px;
+    font-weight: 700;
+    color: #333333;
+}
+
+.bill__item-subText{
+    font-size: 14px;
+    font-weight: 700;
+    color: #333333;
+}
+
+.bill__item-textGrey{
+    font-size: 14px;
+    font-weight: 400;
+    color: #828282;
+}
+
+.bill__item-subTextGrey{
+    font-size: 14px;
+    font-weight: 400;
+    color: #828282;
+}
+
+.bill__bottomBlock{
+    border-top:1px solid #E0E0E0;
+    padding: 16px 20px 20px 20px;
+}
+
+.bill__bottomBlock-btn{
+    display: inline-block;
+    background-color: #fff;
+    border: none;
+    background-color: #FF9F0D;
+    padding: 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Inter',sans-serif;
+    width: 100%;
+    opacity: 1;
+    transition:opacity .5s ease;
+}
+
+.bill__bottomBlock-btn:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
