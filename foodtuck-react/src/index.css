@@ -1634,6 +1634,7 @@ a {
     display: grid;
     grid-template-columns:3fr 1fr 1fr 1fr 0.5fr;
     padding-bottom: 20px;
+    gap: 20px;
 }
 
 .sectionCart__table-name{
@@ -1709,4 +1710,83 @@ a {
 .bill__bottomBlock-btn:hover{
     cursor: pointer;
     opacity: 0.8;
+}
+
+.sectionCart__table-mealItem{
+    display: grid;
+    grid-template-columns:3fr 1fr 1fr 1fr 0.5fr;
+    align-items: center;
+    gap: 20px;
+}
+
+.table__mealItem-leftBlock{
+    display: flex;
+    gap: 16px;
+}
+
+.mealItem__info-name{
+    font-size: 16px;
+    font-weight: 700;
+    color: #333333;
+}
+
+.table__mealItem-price{
+    font-size: 16px;
+    font-weight: 400;
+    color: #333333;
+}
+
+.table__mealItem-totalPrice{
+    font-size: 16px;
+    font-weight: 700;
+    color: #333333;
+}
+
+.table__mealItem-input{
+    max-width: 110px;
+    padding: 5px 40px;
+}
+
+.talbe__mealItem-inputBtn{
+    padding: 0 5px;
+}
+
+.talbe__mealItem-inputPlusBtn{
+    padding: 1px 5px;
+    right:6px;
+}
+
+.mealItem__plusBtn-plusImg{
+    max-width: 22px;
+}
+
+.mealItem__leftBlock-img,
+.mealItem__info-name{
+    opacity: 1;
+    transition: all .5s ease;
+}
+
+.mealItem__leftBlock-img:hover{
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.mealItem__info-name:hover{
+    cursor: pointer;
+    color: #FF9F0D;
+}
+
+.table__mealItem-removeBtn{
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;  
+    opacity: 1;
+    transition:opacity .5s ease; 
+}
+
+.table__mealItem-removeBtn:hover{
+    cursor: pointer;
+    opacity: 0.5;
 }

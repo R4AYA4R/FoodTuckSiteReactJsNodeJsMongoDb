@@ -8,6 +8,8 @@ import tokenService from "./tokenService.js";
 
 import commentModel from "../models/commentModel.js";
 
+import cartMealModel from "../models/cartMealModel.js";
+
 // создаем класс UserService для сервиса пользователей(их удаление,добавление и тд)
 class UserService{
 

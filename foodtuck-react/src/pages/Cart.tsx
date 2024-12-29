@@ -1,6 +1,7 @@
-import { useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import SectionCartTop from "../components/SectionCartTop";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
+import MealItemCart from "../components/MealItemCart";
 
 const Cart = () => {
 
@@ -8,6 +9,7 @@ const Cart = () => {
     const sectionImportantFoodRef = useRef(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef, указываем в useRef null,так как используем typeScript
 
     const onScreen = useIsOnCreen(sectionImportantFoodRef); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
 
     return (
         <main className="main">
@@ -23,7 +25,9 @@ const Cart = () => {
                                 <p className="sectionCart__table-name">Subtotal</p>
                             </div>
                             <div className="sectionCart__table-mainBlock">
-                                items
+
+                                <MealItemCart/>
+
                             </div>
                         </div>
                         <div className="sectionCart__bill">
