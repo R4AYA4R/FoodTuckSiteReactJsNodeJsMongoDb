@@ -5,6 +5,8 @@ const CartMealSchema = new Schema({
 
     usualProductId:{type:String,required:true}, // указываем поле для id объекта блюда из обычного каталога,потом на фронтенде будем использовать это поле,чтобы перейти на страницу товара(блюда) каталога
 
+    name:{type:String,required:true},
+
     category:{type:String,required:true},   
 
     price:{type:Number,required:true}, // указываем этому полю тип Number(для любых чисел,обычных и с запятой типа float)

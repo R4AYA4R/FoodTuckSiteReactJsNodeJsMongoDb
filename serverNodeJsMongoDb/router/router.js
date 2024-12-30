@@ -19,6 +19,11 @@ router.get('/getCommentsForProduct',userController.getCommentsForProduct); // с
 router.put('/updateProductRating',userController.updateProductRating); // создаем put запрос для обновления рейтинга товара 
 
 
+router.post('/createMealCart',mealController.createMealCart); // создаем post запрос для создания товара(блюда) в корзине
+
+router.get('/getAllMealsCart',mealController.getAllMealsCart); // создаем get запрос на получение товаров(блюд) корзины для определенного авторизованного пользователя
+
+
 router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min:3,max:32}),

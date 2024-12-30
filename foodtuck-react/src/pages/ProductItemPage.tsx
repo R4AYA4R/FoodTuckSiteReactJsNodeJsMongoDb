@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SectionProductItemTop from "../components/SectionProductItemTop";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IComment, IMeal } from "../types/types";
+import { IComment, IMeal, IMealCart } from "../types/types";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
 import SectionMenu from "../components/SectionMenu";
@@ -95,9 +95,40 @@ const ProductItemPage = () => {
 
     })
 
+
+    const { data: dataMealsCart, refetch: refetchMealsCart } = useQuery({
+        queryKey: ['mealsCart'],
+        queryFn: async () => {
+
+            // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IMealCart,и указываем,что это массив IMealCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+            const response = await axios.get<IMealCart[]>(`${API_URL}/getAllMealsCart?userId=${user.id}`);
+
+            return response;
+        }
+    })
+
+    const { mutate: mutateAddMealCart } = useMutation({
+        mutationKey: ['add mealCart'],
+        mutationFn: async (mealCart: IMealCart) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IMealCart),но здесь не обязательно указывать тип
+            await axios.post<IMealCart>(`${API_URL}/createMealCart`, mealCart);
+
+        },
+
+        // при успешной мутации,то есть в данном случае при успешном добавлении товара в корзину обновляем dataMealsCart(массив объектов товаров(блюд) корзины),чтобы сразу показывалось изменение в корзине товаров,если так не сделать,то текст Already in Cart(что товар уже в корзине) будет показан только после обновления страницы,а не сразу,так как массив объектов корзины еще не переобновился
+        onSuccess() {
+
+            refetchMealsCart();
+
+        }
+
+    })
+
     const [totalPriceProduct, setTotalPriceProduct] = useState(data?.data.price);
 
 
+    const isExistsCart = dataMealsCart?.data.some(m => m.name === data?.data.name); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataMealsCart(в массиве объектов товаров(блюд) корзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен data?.data name(то есть name этого товара(блюда) на этой странице),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
 
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
 
@@ -249,6 +280,28 @@ const ProductItemPage = () => {
 
     }
 
+    const addMealToCartBtn = () => {
+
+        console.log(user.userName);
+
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то помещаем товар в корзину,в другом случае перекидываем пользователя на страницу авторизации
+        if (user.userName) {
+
+            if (data?.data) {
+
+                mutateAddMealCart({ name: data?.data.name, category: data?.data.category, amount: inputAmountValue, image: data?.data.image, price: data?.data.price, priceFilter: data?.data.priceFilter, rating: data?.data.rating, totalPrice: totalPriceProduct, usualProductId: data?.data._id, forUser: user.id } as IMealCart); // передаем в mutateAddMealCart объект типа IMealCart только таким образом,разворачивая в объект все необходимые поля(то есть наш product(объект блюда в данном случае),в котором полe name,делаем поле name со значением,как и у этого товара(блюда) name(data?.data.name) и остальные поля также,кроме поля amount и totalPrice,их мы изменяем и указываем как значения inputAmountValue(инпут с количеством) и totalPriceProduct(состояние цены,которое изменяется при изменении inputAmountValue)),указываем тип этого объекта как созданный нами тип as IMealCart(в данном случае делаем так,потому что показывает ошибку,что totalPriceProduct может быть undefined),при создании на сервере не указываем конкретное значение id,чтобы он сам автоматически генерировался на сервере и потом можно было удалить этот объект, добавляем поле forUser со значением user.id(то есть со значением id пользователя,чтобы потом показывать товары в корзине для каждого конкретного пользователя,у которого id будет равен полю forUser у этого товара),указываем usualProductId со значением data?.data.id,чтобы потом в корзине можно было перейти на страницу товара в магазине по этому usualProductId,а сам id корзины товара не указываем,чтобы он автоматически правильно генерировался,так как делаем показ товаров по-разному для конкретных пользователей(то есть как и должно быть),иначе ошибка
+
+            }
+
+
+        } else {
+
+            router('/userPage'); // перекидываем пользователя на страницу авторизации (/userPage в данном случае)
+
+        }
+
+    }
+
     return (
         <main className="main">
             <SectionProductItemTop meal={data?.data} />
@@ -278,19 +331,28 @@ const ProductItemPage = () => {
 
                                 </div>
                                 <div className="sectionProductItemPage__rightBlock-bottomBlock">
-                                    <div className="sectionProductItemPage__bottomBlock-inputBlock">
-                                        <button className="sectionProductItemPage__inputBlock-minusBtn" onClick={handlerMinusAmountBtn}>
-                                            <img src="/images/sectionProductItemPage/Minus (1).png" alt="" className="sectionProductItemPage__inputBlock-minusImg" />
-                                        </button>
-                                        <input type="number" className="sectionProductItemPage__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
-                                        <button className="sectionProductItemPage__inputBlock-plustBtn" onClick={handlerPlusAmountBtn}>
-                                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="sectionProductItemPage__inputBlock-plusImg" />
-                                        </button>
-                                    </div>
-                                    <button className="sectionProductItemPage__bottomBlock-btn">
-                                        <img src="/images/sectionProductItemPage/Bag.png" alt="" className="sectionProductItemPage__btn-img" />
-                                        <p className="sectionProductItemPage__btn-text">Add to cart</p>
-                                    </button>
+
+                                    {/* если isExistsBasket true(то есть этот товар(блюдо) на этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
+                                    {user.userName && isExistsCart ?
+                                        <h3 className="textAlreadyInCart">Already in Cart</h3>
+                                        :
+                                        <>
+                                            <div className="sectionProductItemPage__bottomBlock-inputBlock">
+                                                <button className="sectionProductItemPage__inputBlock-minusBtn" onClick={handlerMinusAmountBtn}>
+                                                    <img src="/images/sectionProductItemPage/Minus (1).png" alt="" className="sectionProductItemPage__inputBlock-minusImg" />
+                                                </button>
+                                                <input type="number" className="sectionProductItemPage__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                                                <button className="sectionProductItemPage__inputBlock-plustBtn" onClick={handlerPlusAmountBtn}>
+                                                    <img src="/images/sectionProductItemPage/Plus.png" alt="" className="sectionProductItemPage__inputBlock-plusImg" />
+                                                </button>
+                                            </div>
+                                            <button className="sectionProductItemPage__bottomBlock-btn" onClick={addMealToCartBtn}>
+                                                <img src="/images/sectionProductItemPage/Bag.png" alt="" className="sectionProductItemPage__btn-img" />
+                                                <p className="sectionProductItemPage__btn-text">Add to cart</p>
+                                            </button>
+                                        </>
+                                    }
+
                                 </div>
                             </div>
                         </div>

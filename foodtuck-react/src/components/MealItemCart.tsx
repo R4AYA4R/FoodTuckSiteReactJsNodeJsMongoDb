@@ -1,8 +1,15 @@
 import { ChangeEvent, useEffect, useState } from "react";
+import { IMealCart } from "../types/types";
 
-const MealItemCart = () => {
+interface IMealItemCart {
 
-    const [inputAmountValue, setInputAmountValue] = useState(1);
+    mealCart: IMealCart;
+
+}
+
+const MealItemCart = ({ mealCart }: IMealItemCart) => {
+
+    const [inputAmountValue, setInputAmountValue] = useState(mealCart.amount);
 
 
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,19 +65,19 @@ const MealItemCart = () => {
     return (
         <div className="sectionCart__table-mealItem">
             <div className="table__mealItem-leftBlock">
-                <img src="/images/sectionMenu/Burger.png" alt="" className="mealItem__leftBlock-img" />
+                <img src={`/images/sectionMenu/${mealCart.image}`} alt="" className="mealItem__leftBlock-img" />
                 <div className="mealItem__leftBlock-info">
-                    <p className="mealItem__info-name">Burger</p>
+                    <p className="mealItem__info-name">{mealCart.name}</p>
                     <div className="products__item-stars">
-                        <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                        <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                        <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                        <img src="/images/sectionCatalog/StarYellow.png" alt="" className="products__stars-imgYellow" />
-                        <img src="/images/sectionCatalog/StarGrey.png" alt="" className="products__stars-imgGrey" />
+                        <img src={mealCart.rating === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="products__stars-imgYellow products__starsMealsItem-img" />
+                        <img src={mealCart.rating >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow products__starsMealsItem-img" />
+                        <img src={mealCart.rating >= 3 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow products__starsMealsItem-img" />
+                        <img src={mealCart.rating >= 4 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow products__starsMealsItem-img" />
+                        <img src={mealCart.rating >= 5 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgGrey products__starsMealsItem-img" />
                     </div>
                 </div>
             </div>
-            <p className="table__mealItem-price">$35.00</p>
+            <p className="table__mealItem-price">${mealCart.price}</p>
             <div className="sectionProductItemPage__bottomBlock-inputBlock">
                 <button className="sectionProductItemPage__inputBlock-minusBtn talbe__mealItem-inputBtn" onClick={handlerMinusAmountBtn}>
                     <img src="/images/sectionProductItemPage/Minus (1).png" alt="" className="sectionProductItemPage__inputBlock-minusImg" />

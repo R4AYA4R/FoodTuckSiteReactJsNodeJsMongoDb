@@ -1627,7 +1627,7 @@ a {
 .sectionCart__table{
     border: 1px solid #E0E0E0;
     border-radius: 6px;
-    padding: 20px 0 0 20px;
+    padding: 20px 20px 0 20px;
 }
 
 .sectionCart__table-names{
@@ -1717,6 +1717,8 @@ a {
     grid-template-columns:3fr 1fr 1fr 1fr 0.5fr;
     align-items: center;
     gap: 20px;
+    border-top: 1px solid #E0E0E0;
+    padding: 20px 0;
 }
 
 .table__mealItem-leftBlock{
@@ -1753,11 +1755,15 @@ a {
 
 .talbe__mealItem-inputPlusBtn{
     padding: 1px 5px;
-    right:6px;
+    right:2px;
 }
 
 .mealItem__plusBtn-plusImg{
     max-width: 22px;
+}
+
+.mealItem__leftBlock-img{
+    max-width: 100px;
 }
 
 .mealItem__leftBlock-img,
@@ -1789,4 +1795,13 @@ a {
 .table__mealItem-removeBtn:hover{
     cursor: pointer;
     opacity: 0.5;
+}
+
+.textEmptyCart{
+    border-top: 1px solid #E0E0E0;
+    padding-top: 15px;
+}
+
+.innerForLoaderCart{
+    padding: 30px 0;
 }

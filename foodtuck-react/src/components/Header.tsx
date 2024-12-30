@@ -1,12 +1,25 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { AuthResponse } from "../types/types";
+import { AuthResponse, IMealCart } from "../types/types";
 import { API_URL } from "../http/http";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useQuery } from "@tanstack/react-query";
 
 const Header = () => {
+
+    // делаем запрос на получение массива товаров корзины и указываем в queryKey название такое же,как и указывали в файле Cart.tsx(в корзине),чтобы лишние запросы на сервер на одинаковые данные(в данном случае массив товаров корзины) не шли из разных файлов и данные переобновлялись правильно автоматически,когда обновляется массив товаров корзины,если указать разные названия,то данные не будут автоматически обновляться сразу,а только после перезагрузки страницы
+    const { data: dataMealsCart, refetch: refetchMealsCart } = useQuery({
+        queryKey: ['mealsCart'],
+        queryFn: async () => {
+
+            // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IMealCart,и указываем,что это массив IMealCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+            const response = await axios.get<IMealCart[]>(`${API_URL}/getAllMealsCart?userId=${user.id}`);
+
+            return response;
+        }
+    })
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
@@ -57,6 +70,13 @@ const Header = () => {
 
     }, [])
 
+    // при изменении состояния user(в userSlice в данном случае) (то есть когда пользователь логинится или выходит из аккаунта,или его поля меняются),то делаем повторный запрос на получения товаров корзины,чтобы данные о количестве товаров корзины сразу переобновлялись при изменения состояния user(то есть когда пользователь логинится или выходит из аккаунта,или его поля меняются),если не сделать это,то данные о товарах корзины будут переобновляться только после перезагрузки страницы
+    useEffect(()=>{
+
+        refetchMealsCart();
+
+    },[user])
+
 
     return (
         <header className="header">
@@ -81,7 +101,7 @@ const Header = () => {
                         <li className="menu__list-item">
                             <NavLink to="/cart" className={({ isActive }) => isActive ? "header__menu-link  header__menu-linkCart header__menu-linkActive" : "header__menu-link header__menu-linkCart"}>
                                 <img src="/images/header/Tote.png" alt="" className="menu__list-itemImg" />
-                                <span className="menu__link-spanCart">0</span>
+                                <span className="menu__link-spanCart">{dataMealsCart?.data.length}</span>
                             </NavLink>
                         </li>
                     </ul>

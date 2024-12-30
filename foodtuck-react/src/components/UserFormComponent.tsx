@@ -28,9 +28,9 @@ const UserFormComponent = () => {
 
     const [inputConfirmPasswordSignUp, setInputConfirmPasswordSignUp] = useState('');
 
-    const [inputTypeSignUpPasswordHide, setInputTypeSignUpPasswordHide] = useState(false);
+    const [inputTypeSignUpPasswordHide, setInputTypeSignUpPasswordHide] = useState(true);
 
-    const [inputTypeSignUpConfirmPasswordHide, setInputTypeSignUpConfirmPasswordHide] = useState(false);
+    const [inputTypeSignUpConfirmPasswordHide, setInputTypeSignUpConfirmPasswordHide] = useState(true);
 
 
     const [errorSignInForm, setErrorSignInForm] = useState('');
