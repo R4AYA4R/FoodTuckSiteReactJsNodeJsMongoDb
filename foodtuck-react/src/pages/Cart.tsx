@@ -15,6 +15,7 @@ const Cart = () => {
 
     // const onScreen = useIsOnCreen(sectionImportantFoodRef); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
+    const [subtotalCheckPrice,setSubtotalCheckPrice] = useState<number>();
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
@@ -61,6 +62,8 @@ const Cart = () => {
         }
     })
 
+    const dataTotalPrice = dataMealsCart?.data.reduce((prev,curr) => prev + curr.totalPrice, 0);  // проходимся по массиву объектов товаров(блюд) корзины и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).totalPrice,это чтобы посчитать общую сумму цены всех товаров(блюд)
+
     // // при запуске сайта(в данном случае при запуске этого компонента,то есть этой страницы) будет отработан код в этом useEffect
     useEffect(() => {
 
@@ -75,6 +78,14 @@ const Cart = () => {
         console.log(user.userName);
 
     }, [])
+
+
+    // при изменении dataProductsCart?.data(массива объектов корзины),изменяем состояние subtotalCheckPrice на dataTotalPrice,чтобы посчитать общую сумму товаров
+    useEffect(()=>{
+
+        setSubtotalCheckPrice(dataTotalPrice);
+
+    },[dataMealsCart?.data])
 
 
     return (
@@ -102,6 +113,11 @@ const Cart = () => {
                                             <MealItemCart key={mealCart._id} mealCart={mealCart} />
 
                                         )}
+
+                                        <div className="table__mainBlock-bottomBlock">
+                                            <button className="table__bottomBlock-clearCartBtn">Clear Cart</button>
+                                            <button className="table__bottomBlock-updateCartBtn">Update Cart</button>
+                                        </div>
                                     </>
                                     : isFetching || isLoading ? 
                                     <div className="innerForLoader innerForLoaderCart">
@@ -117,7 +133,7 @@ const Cart = () => {
                             <div className="bill__topBlock">
                                 <div className="sectionCart__bill-item">
                                     <p className="bill__item-text">Cart Subtotal</p>
-                                    <p className="bill__item-subText">$120.00</p>
+                                    <p className="bill__item-subText">${subtotalCheckPrice}</p>
                                 </div>
                                 <div className="sectionCart__bill-item">
                                     <p className="bill__item-textGrey">Shipping Charge</p>
@@ -127,7 +143,9 @@ const Cart = () => {
                             <div className="bill__bottomBlock">
                                 <div className="sectionCart__bill-item">
                                     <p className="bill__item-text">Total</p>
-                                    <p className="bill__item-subText">$130.00</p>
+
+                                    {/* если subtotalCheckPrice true(то есть в этом состоянии есть значение,в данном случае делаем эту проверку,потому что выдает ошибку,что subtotalCheckPrice может быть undefined),то указываем значение этому тексту как subtotalCheckPrice + 10(в данном случае 10 это типа цена доставки,мы ее прибавляем к общей цене всех товаров(блюд) корзины) */}
+                                    <p className="bill__item-subText">${subtotalCheckPrice && subtotalCheckPrice + 10}</p>
                                 </div>
                                 <button className="bill__bottomBlock-btn">
                                     <p className="bill__btn-text">Proceed to Checkout</p>

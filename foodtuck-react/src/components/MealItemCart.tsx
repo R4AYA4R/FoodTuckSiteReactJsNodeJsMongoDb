@@ -11,6 +11,8 @@ const MealItemCart = ({ mealCart }: IMealItemCart) => {
 
     const [inputAmountValue, setInputAmountValue] = useState(mealCart.amount);
 
+    const [subtotalMealPrice,setSubtotalMealPrice] = useState(mealCart.totalPrice);
+
 
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
 
@@ -62,6 +64,13 @@ const MealItemCart = ({ mealCart }: IMealItemCart) => {
 
     }
 
+    // при изменении inputAmountValue изменяем состояние subtotalMealPrice
+    useEffect(()=>{
+
+        setSubtotalMealPrice(inputAmountValue * mealCart.price); // умножаем inputAmountValue(выбранное количество блюд) на mealCart.price(цену блюда)
+
+    },[inputAmountValue])
+
     return (
         <div className="sectionCart__table-mealItem">
             <div className="table__mealItem-leftBlock">
@@ -87,7 +96,7 @@ const MealItemCart = ({ mealCart }: IMealItemCart) => {
                     <img src="/images/sectionProductItemPage/Plus.png" alt="" className="sectionProductItemPage__inputBlock-plusImg mealItem__plusBtn-plusImg" />
                 </button>
             </div>
-            <p className="table__mealItem-totalPrice">$221.00</p>
+            <p className="table__mealItem-totalPrice">${subtotalMealPrice}</p>
             <button className="table__mealItem-removeBtn">
                 <img src="/images/cart/X.png" alt="" className="mealItem__removeBtn-img" />
             </button>
