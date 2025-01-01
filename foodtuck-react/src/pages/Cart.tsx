@@ -19,7 +19,7 @@ const Cart = () => {
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
-    const { setLoadingUser, checkAuthUser, logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { setLoadingUser, checkAuthUser, setUpdateCartMeals } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
 
     // // функция для проверки авторизован ли пользователь(валиден ли его refresh токен),вызываем ее в этом компоненте Cart.tsx(страница корзины),чтобы после перезагрузки страницы корзины правильно отображалось авторизован ли пользователь,если эту функцию не вызвать здесь,то после перезагрузки страницы корзины,будет показывать,что пользователь не авторизован,даже если он авторизован
@@ -110,13 +110,16 @@ const Cart = () => {
                                     <>
                                         {dataMealsCart.data.map(mealCart =>
 
-                                            <MealItemCart key={mealCart._id} mealCart={mealCart} />
+                                            // передаем в компонент MealItemCart пропс(параметр) refetchMealsCart в который передаем функцию refetchMealsCart для обновления массива товаров(блюд) корзины,эту функцию будем вызывать в MealItemCart когда удалим или обновим объект товара(блюда) корзины,чтобы переобновить весь массив товаров корзины
+                                            <MealItemCart key={mealCart._id} mealCart={mealCart} refetchMealsCart={refetchMealsCart} />
 
                                         )}
 
                                         <div className="table__mainBlock-bottomBlock">
                                             <button className="table__bottomBlock-clearCartBtn">Clear Cart</button>
-                                            <button className="table__bottomBlock-updateCartBtn">Update Cart</button>
+
+                                            {/* изменяем поле updateCartMeals у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте MealItemCart отслеживаем изменение этого поля updateCartMeals и делаем там запрос на сервер на обновление данных о товаре в корзине */}
+                                            <button className="table__bottomBlock-updateCartBtn" onClick={()=>setUpdateCartMeals(true)}>Update Cart</button>
                                         </div>
                                     </>
                                     : isFetching || isLoading ? 

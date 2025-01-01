@@ -1,17 +1,47 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { IMealCart } from "../types/types";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { API_URL } from "../http/http";
 
 interface IMealItemCart {
 
     mealCart: IMealCart;
 
+    refetchMealsCart: () => {} // указываем полю refetchMealsCart что это стрелочная функция 
+
 }
 
-const MealItemCart = ({ mealCart }: IMealItemCart) => {
+// берем пропс(параметр) refetchMealsCart из пропсов этого компонента,эту функцию refetchMealsCart передаем как пропс(параметр) в этот компонент в файле Cart.tsx,эта функция для переобновления(повторный запрос на получение массива товаров(блюд)) массива товаров(блюд) корзины
+const MealItemCart = ({ mealCart, refetchMealsCart }: IMealItemCart) => {
 
     const [inputAmountValue, setInputAmountValue] = useState(mealCart.amount);
 
-    const [subtotalMealPrice,setSubtotalMealPrice] = useState(mealCart.totalPrice);
+    const [subtotalMealPrice, setSubtotalMealPrice] = useState(mealCart.totalPrice);
+
+
+    const { updateCartMeals } = useTypedSelector(state => state.cartSlice); // указываем наш слайс(редьюсер) под названием cartSlice и деструктуризируем у него поле состояния updateCartMeals,используя наш типизированный хук для useSelector
+
+    const { setUpdateCartMeals } = useActions(); // берем actions для изменения состояния слайса(редьюсера) cartSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+
+    const { mutate:mutateUpdateCartMeal } = useMutation({
+        mutationKey: ['updateCartMeal'],
+        mutationFn: async (mealCart: IMealCart) => {
+
+            // делаем запрос на сервер для изменения данных товара(блюда) корзины,в данном случае указываем put запрос для изменения данных на сервере,и указываем тип данных,которые нужно изменить на сервере(то есть просто какие данные нужно передать на сервер в теле запроса),в данном случае это тип данных IMealCart),но здесь не обязательно указывать тип,передаем просто объект mealCart как тело запроса
+            await axios.put<IMealCart>(`${API_URL}/updateCartMeal`, mealCart);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров(блюд) корзины с помощью функции refetchMealsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+            refetchMealsCart();
+        }
+
+    })
 
 
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -65,11 +95,29 @@ const MealItemCart = ({ mealCart }: IMealItemCart) => {
     }
 
     // при изменении inputAmountValue изменяем состояние subtotalMealPrice
-    useEffect(()=>{
+    useEffect(() => {
 
         setSubtotalMealPrice(inputAmountValue * mealCart.price); // умножаем inputAmountValue(выбранное количество блюд) на mealCart.price(цену блюда)
 
-    },[inputAmountValue])
+    }, [inputAmountValue])
+
+
+    // при изменении поля updateCartMeals у состояния слайса(редьюсера) cartSlice делаем запрос на сервер на обновление данных о товаре(блюде) в корзине
+    useEffect(()=>{
+
+        console.log(updateCartMeals);
+
+        // если updateCartMeals true и mealCart.amount не равно inputAmountValue(то есть количество товара(блюда) в корзине(которое мы получили из запроса на сервер на получения всех товаров корзины в компоненте Cart.tsx) не равно значению состояния inputAmountValue,то есть пользователь изменил количество товара(блюда) в корзине),то обновляем данные товара(блюда),делаем эту проверку,чтобы не циклился запрос на переобновление массива товаров(блюд) корзины ,который мы делаем при обновлении данных товара(блюда),если эту проверку не сделать,то будут циклиться запросы на сервер и не будет нормально работать сайт, и чтобы если пользователь нажал на кнопку обновить товары в корзине,но не изменил inputAmountValue(количество товара) на новое значение,то не делать запрос на обновление товара корзины,чтобы не шли запросы на сервер просто так
+        if(updateCartMeals && mealCart.amount !== inputAmountValue){
+
+            mutateUpdateCartMeal({...mealCart,amount:inputAmountValue,totalPrice:subtotalMealPrice}); // делаем запрос на обновление данных товара корзины,разворачиваем весь объект mealCart,то есть вместо mealCart будут подставлены все поля из объекта mealCart,в поля amount и totalPrice указываем значения состояний количества (inputAmountValue) и цены товара(блюда)(subtotalMealPrice) на этой странице
+
+        }
+
+        setUpdateCartMeals(false); // изменяем поле updateCartMeals у состояния слайса(редьюсера) cartSlice на false,чтобы указать,что данные товара обновились и потом можно было опять нажимать на кнопку обновления всех товаров корзины
+
+    },[updateCartMeals])
+
 
     return (
         <div className="sectionCart__table-mealItem">

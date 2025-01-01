@@ -23,6 +23,8 @@ router.post('/createMealCart',mealController.createMealCart); // создаем 
 
 router.get('/getAllMealsCart',mealController.getAllMealsCart); // создаем get запрос на получение товаров(блюд) корзины для определенного авторизованного пользователя
 
+router.put('/updateCartMeal',mealController.updateCartMeal); // создаем put запрос на обновление данных товара(блюда) корзины
+
 
 router.post('/registration',
     body('email').isEmail(),
