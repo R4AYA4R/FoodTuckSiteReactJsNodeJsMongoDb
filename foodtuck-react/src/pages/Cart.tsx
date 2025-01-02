@@ -3,7 +3,7 @@ import SectionCartTop from "../components/SectionCartTop";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
 import MealItemCart from "../components/MealItemCart";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AuthResponse, IMealCart } from "../types/types";
 import axios from "axios";
 import { API_URL } from "../http/http";
@@ -62,6 +62,22 @@ const Cart = () => {
         }
     })
 
+    const { mutate:mutateDeleteCartMeal } = useMutation({
+        mutationKey: ['deleteCartMeal'],
+        mutationFn: async (mealCart: IMealCart) => {
+
+            // делаем запрос на сервер для удаление товара(блюда) корзины,и указываем тип данных,которые вернет сервер(то есть в данном случае будем от сервера возвращать удаленный объект товара(блюда) в базе данных,то есть в данном случае тип IMealCart),но здесь не обязательно указывать тип
+            await axios.delete<IMealCart>(`${API_URL}/deleteCartMeal/${mealCart._id}`);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров(блюд) корзины с помощью функции refetchMealsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+            refetchMealsCart();
+        }
+
+    })
+
     const dataTotalPrice = dataMealsCart?.data.reduce((prev,curr) => prev + curr.totalPrice, 0);  // проходимся по массиву объектов товаров(блюд) корзины и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).totalPrice,это чтобы посчитать общую сумму цены всех товаров(блюд)
 
     // // при запуске сайта(в данном случае при запуске этого компонента,то есть этой страницы) будет отработан код в этом useEffect
@@ -86,6 +102,19 @@ const Cart = () => {
         setSubtotalCheckPrice(dataTotalPrice);
 
     },[dataMealsCart?.data])
+
+
+    // функция для удаления всех товаров корзины
+    const deleteAllMealsCart = () => {
+
+        // проходимся по каждому элементу массива товаров(блюд) корзины и вызываем мутацию mutateDeleteCartMeal и передаем туда mealCart(сам mealCart, каждый объект товара(блюда) на каждой итерации,и потом в функции запроса на сервер mutateDeleteCartMeal будем брать у этого mealCart только id для удаления из корзины)
+        dataMealsCart?.data.forEach((mealCart)=>{
+
+            mutateDeleteCartMeal(mealCart);
+
+        })
+
+    }
 
 
     return (
@@ -116,7 +145,7 @@ const Cart = () => {
                                         )}
 
                                         <div className="table__mainBlock-bottomBlock">
-                                            <button className="table__bottomBlock-clearCartBtn">Clear Cart</button>
+                                            <button className="table__bottomBlock-clearCartBtn" onClick={deleteAllMealsCart}>Clear Cart</button>
 
                                             {/* изменяем поле updateCartMeals у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте MealItemCart отслеживаем изменение этого поля updateCartMeals и делаем там запрос на сервер на обновление данных о товаре в корзине */}
                                             <button className="table__bottomBlock-updateCartBtn" onClick={()=>setUpdateCartMeals(true)}>Update Cart</button>

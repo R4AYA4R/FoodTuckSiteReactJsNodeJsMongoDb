@@ -43,6 +43,22 @@ const MealItemCart = ({ mealCart, refetchMealsCart }: IMealItemCart) => {
 
     })
 
+    const { mutate:mutateDeleteCartMeal } = useMutation({
+        mutationKey: ['deleteCartMeal'],
+        mutationFn: async (mealCart: IMealCart) => {
+
+            // делаем запрос на сервер для удаление товара(блюда) корзины,и указываем тип данных,которые вернет сервер(то есть в данном случае будем от сервера возвращать удаленный объект товара(блюда) в базе данных,то есть в данном случае тип IMealCart),но здесь не обязательно указывать тип
+            await axios.delete<IMealCart>(`${API_URL}/deleteCartMeal/${mealCart._id}`);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров(блюд) корзины с помощью функции refetchMealsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+            refetchMealsCart();
+        }
+
+    })
+
 
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
 
@@ -145,7 +161,9 @@ const MealItemCart = ({ mealCart, refetchMealsCart }: IMealItemCart) => {
                 </button>
             </div>
             <p className="table__mealItem-totalPrice">${subtotalMealPrice}</p>
-            <button className="table__mealItem-removeBtn">
+
+            {/* в onClick этой кнопке указываем нашу функцию для удаления товара(блюда) из корзины(то есть в данном случае удаляем ее из базы данных у сущности(модели) корзины) */}
+            <button className="table__mealItem-removeBtn" onClick={()=>mutateDeleteCartMeal(mealCart)}>
                 <img src="/images/cart/X.png" alt="" className="mealItem__removeBtn-img" />
             </button>
         </div>

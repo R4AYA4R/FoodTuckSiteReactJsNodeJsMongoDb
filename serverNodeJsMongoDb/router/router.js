@@ -25,6 +25,8 @@ router.get('/getAllMealsCart',mealController.getAllMealsCart); // создаем
 
 router.put('/updateCartMeal',mealController.updateCartMeal); // создаем put запрос на обновление данных товара(блюда) корзины
 
+router.delete('/deleteCartMeal/:mealId',mealController.deleteCartMeal); // создаем delete запрос на удаление товара(блюда) корзины, delete запрос не имеет тела запроса и все query параметры передаются через строку запроса,в данном случае передаем через двоеточие query параметр mealId(id товара(блюда) корзины,который нужно удалить)
+
 
 router.post('/registration',
     body('email').isEmail(),
