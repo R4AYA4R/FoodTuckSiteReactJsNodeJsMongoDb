@@ -1843,3 +1843,56 @@ a {
     transition: opacity .5s ease;
     font-family: 'Inter', sans-serif;
 }
+
+.sectionUserPage__mainBlock-accountSettings {
+    border: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+.settings__accountSettings-form {
+    border: 1px solid #E0E0E0;
+    border-radius: 6px;
+}
+
+.accountSettings__form-title {
+    color: #333333;
+    font-weight: 500;
+    font-size: 18px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.accountSettings__form-main {
+    padding: 20px;
+}
+
+.accountSettings__form-text {
+    color: #333333;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 6px;
+}
+
+.accountSettings__input {
+    padding: 14px 16px;
+    border: 1px solid #E0E0E0;
+    outline: none;
+}
+
+.accountSettings__form-btn {
+    background-color: #2C742F;
+    color: #fff;
+    padding: 12px 18px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 8px;
+    transition: all .5s ease;
+}
+
+.accountSettings__form-btn:hover {
+    cursor: pointer;
+    background-color: #1c8f1f;
+}

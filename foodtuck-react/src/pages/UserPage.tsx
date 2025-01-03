@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import SectionSignUpTop from "../components/SectionSignUpTop";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
 import UserFormComponent from "../components/UserFormComponent";
@@ -18,6 +18,13 @@ const UserPage = () => {
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
     const { setLoadingUser, checkAuthUser, logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+
+    const [inputNameAccSettings, setInputNameAccSettings] = useState('');
+
+    const [inputEmailAccSettings, setInputEmailAccSettings] = useState('');
+
+    const [errorAccSettings, setErrorAccSettings] = useState('');
 
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
@@ -82,6 +89,16 @@ const UserPage = () => {
             console.log(e.reponse?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
 
         }
+
+    }
+
+
+    // функция для формы изменения имени и почты пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitAccSettingsForm = (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+
 
     }
 
@@ -156,8 +173,31 @@ const UserPage = () => {
                             }
 
                             {tab === 'Account Settings' &&
-                                <div className="sectionUserPage__mainBlock-inner">
-                                    Account Settings
+                                <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-accountSettings">
+
+                                    <form action="" className="settings__accountSettings-form" onSubmit={onSubmitAccSettingsForm}>
+                                        <h2 className="accountSettings__form-title">Account Settings</h2>
+                                        <div className="accountSettings__form-main">
+                                            <div className="accountSettings__form-item">
+                                                <p className="accountSettings__form-text">Name</p>
+                                                <input type="text" className="signInMain__inputEmailBlock-input accountSettings__input" placeholder={`${user.userName}`} value={inputNameAccSettings} onChange={(e) => setInputNameAccSettings(e.target.value)} />
+                                            </div>
+                                            <div className="accountSettings__form-item">
+                                                <p className="accountSettings__form-text">Email</p>
+                                                <input type="text" className="signInMain__inputEmailBlock-input accountSettings__input" placeholder={`${user.email}`} value={inputEmailAccSettings} onChange={(e) => setInputEmailAccSettings(e.target.value)} />
+                                            </div>
+
+                                            {/* если errorAccSettings true(то есть в состоянии errorAccSettings что-то есть),то показываем текст ошибки */}
+                                            {errorAccSettings &&
+                                                <p className="formErrorText">{errorAccSettings}</p>
+                                            }
+
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button className="accountSettings__form-btn" type="submit">Save Changes</button>
+
+                                        </div>
+                                    </form>
+
                                 </div>
                             }
 
