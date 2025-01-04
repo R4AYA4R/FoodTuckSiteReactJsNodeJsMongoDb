@@ -2,6 +2,7 @@ import { Router } from "express";
 import mealController from "../controllers/mealController.js";
 import userController from "../controllers/userController.js";
 import { body } from "express-validator"; // импортируем функцию body из express-validator для валидации тела запроса,в данном случае импортируем вручную,так как автоматически не импортируется
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = new Router(); // создаем объект на основе этого класса Router
 
@@ -26,6 +27,9 @@ router.get('/getAllMealsCart',mealController.getAllMealsCart); // создаем
 router.put('/updateCartMeal',mealController.updateCartMeal); // создаем put запрос на обновление данных товара(блюда) корзины
 
 router.delete('/deleteCartMeal/:mealId',mealController.deleteCartMeal); // создаем delete запрос на удаление товара(блюда) корзины, delete запрос не имеет тела запроса и все query параметры передаются через строку запроса,в данном случае передаем через двоеточие query параметр mealId(id товара(блюда) корзины,который нужно удалить)
+
+
+router.put('/changeAccInfo',authMiddleware,body('email').isEmail(),userController.changeAccInfo);  // указываем put запрос для изменения данных пользователя в базе данных,вторым параметром указываем authMiddleware для проверки на access токен у пользователя,если он есть и он еще годен по сроку жизни этого токена(мы этот срок указали при создании токена),то будет выполнена функция changeAccInfo,если нет,то не будет и будет ошибка,третьим параметром указываем middleware(функцию body для валидации),указываем в параметре body() названия поля из тела запроса,которое хотим провалидировать(в данном случае это email),и указываем валидатор isEmail() для проверки на email
 
 
 router.post('/registration',

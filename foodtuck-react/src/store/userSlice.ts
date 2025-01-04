@@ -68,6 +68,12 @@ export const userSlice = createSlice({
 
             state.isLoading = action.payload; // изменяем поле isLoading у этого состояния на action.payload(данные,которые передадим этой функции потом при вызове,в данном случае будем передавать true или false,чтобы указать,что сейчас идет загрузка)
 
+        },
+
+        setUser:(state,action:PayloadAction<IUser>) => {
+
+            state.user = action.payload; // изменяем объект пользователя на action.payload(данные пользователя,которые пришли от сервера)
+
         }
 
     }
