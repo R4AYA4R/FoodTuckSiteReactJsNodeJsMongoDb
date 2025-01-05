@@ -1896,3 +1896,24 @@ a {
     cursor: pointer;
     background-color: #1c8f1f;
 }
+
+.settings__passSettings-form{
+    margin-top: 30px;
+}
+
+.passwordSettings__item{
+    position: relative;
+}
+
+.passwordSettings__item-img{
+    position: absolute;
+    top: 35px;
+    right: 15px;
+    opacity: 1;
+    transition:opacity .5s ease;
+}
+
+.passwordSettings__item-img:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
