@@ -774,6 +774,12 @@ a {
 
 .topSelect__selectTop-img {
     max-width: 20px;
+    transform: rotate(0deg);
+    transition:all .5s ease;
+}
+
+.topSelect__selectTop-imgActive{
+    transform: rotate(180deg);
 }
 
 .topSelect__optionsBlock {
@@ -1916,4 +1922,35 @@ a {
 .passwordSettings__item-img:hover{
     cursor: pointer;
     opacity: 0.5;
+}
+
+.sectionUserPage__mainBlock-adminPanel{
+    padding: 0;
+    border: none;
+    border-radius: none;
+}
+
+.adminForm__select{
+    display: block;
+    max-width: 300px;
+    margin-bottom: 16px;
+}
+
+.adminForm__topSelect-text{
+    color: #333333;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 6px;
+}
+
+.adminForm__topSelect-selectTopText{
+    font-size: 16px;
+}
+
+.adminForm__topSelect-selectTop{
+    border:1px solid #E0E0E0;
+}
+
+.adminForm__topSelect-optionsBlockActive{
+    max-height: 200px;
 }

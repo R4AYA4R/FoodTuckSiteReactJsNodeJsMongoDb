@@ -491,7 +491,7 @@ const Catalog = () => {
                                     <div className="topSelect__inner">
                                         <div className="topSelect__selectTop" onClick={() => setSelectBlockActive((prev) => !prev)}>
                                             <p className="topSelect__selectTop-text">{selectBlockValue}</p>
-                                            <img src="/images/sectionCatalog/CaretDown.png" alt="" className="topSelect__selectTop-img" />
+                                            <img src="/images/sectionCatalog/CaretDown.png" alt="" className={selectBlockActive ? "topSelect__selectTop-img topSelect__selectTop-imgActive" : "topSelect__selectTop-img"} />
                                         </div>
                                         <div className={selectBlockActive ? "topSelect__optionsBlock topSelect__optionsBlock--active" : "topSelect__optionsBlock"}>
                                             <div className="topSelect__optionsBlock-item" onClick={selectItemHandler}>

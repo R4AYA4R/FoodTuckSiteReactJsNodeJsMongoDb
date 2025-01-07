@@ -17,7 +17,7 @@ const UserPage = () => {
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
-    const { setLoadingUser, checkAuthUser, logoutUser,setUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { setLoadingUser, checkAuthUser, logoutUser, setUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
 
     const [inputNameAccSettings, setInputNameAccSettings] = useState('');
@@ -33,28 +33,38 @@ const UserPage = () => {
 
     const [inputPassConfirm, setInputPassConfirm] = useState('');
 
-    const [passHideCurrent,setPassHideCurrent] = useState(true);
+    const [passHideCurrent, setPassHideCurrent] = useState(true);
 
-    const [passHideNew,setPassHideNew] = useState(true);
+    const [passHideNew, setPassHideNew] = useState(true);
 
-    const [passHideConfirm,setPassHideConfirm] = useState(true);
+    const [passHideConfirm, setPassHideConfirm] = useState(true);
 
     const [errorPassSettings, setErrorPassSettings] = useState('');
+
+
+    const [inputNameMealProduct, setInputNameMealProduct] = useState('');
+
+    const [selectBlockAdminFormActive, setSelectBlockAdminFormActive] = useState(false);
+
+    const [selectBlockAdminFormValue, setSelectBlockAdminFormValue] = useState(''); // состояние для значения селекта категорий
+
+    const [errorAdminForm, setErrorAdminForm] = useState('');
+
 
 
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
     const changeAccInfoInDb = async (userId: number, name: string, email: string) => {
 
-        return $api.put('/changeAccInfo',{ userId, name, email }); // возвращаем put запрос на сервер на эндпоинт /changeAccInfo для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение данных пользователя в базе данных(на /changeAccInfo в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
+        return $api.put('/changeAccInfo', { userId, name, email }); // возвращаем put запрос на сервер на эндпоинт /changeAccInfo для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение данных пользователя в базе данных(на /changeAccInfo в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
 
     }
 
     // фукнция для запроса на сервер на изменение пароля пользователя в базе данных
     const changePassInDb = async (userId: number, currentPass: string, newPass: string) => {
 
-        return $api.put('/changeAccPass',{ userId, currentPass, newPass }); // возвращаем put запрос на сервер на эндпоинт /changeAccPass для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение пароля пользователя в базе данных(на /changePass в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
+        return $api.put('/changeAccPass', { userId, currentPass, newPass }); // возвращаем put запрос на сервер на эндпоинт /changeAccPass для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение пароля пользователя в базе данных(на /changePass в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
 
-    } 
+    }
 
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
@@ -161,7 +171,7 @@ const UserPage = () => {
 
                 }
 
-                const response = await changeAccInfoInDb(user.id,name,inputEmailAccSettings); // вызываем нашу функцию запроса на сервер для изменения данных пользователя,передаем туда user.id(id пользователя) и инпуты имени и почты
+                const response = await changeAccInfoInDb(user.id, name, inputEmailAccSettings); // вызываем нашу функцию запроса на сервер для изменения данных пользователя,передаем туда user.id(id пользователя) и инпуты имени и почты
 
                 console.log(response.data);
 
@@ -190,32 +200,32 @@ const UserPage = () => {
 
 
     // функция для формы изменения пароля пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
-    const onSubmitPassSettingsForm = async (e:FormEvent<HTMLFormElement>) => {
+    const onSubmitPassSettingsForm = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если инпут текущего пароля равен пустой строке,то показываем ошибку
-        if(inputPassCurrent === ''){
+        if (inputPassCurrent === '') {
 
             setErrorPassSettings('Enter current password');
 
-        } else if(inputPassNew.length < 3 || inputPassNew.length > 32){
+        } else if (inputPassNew.length < 3 || inputPassNew.length > 32) {
             // если инпут нового пароля по длине(по количеству символов) меньше 3 или больше 32,то показываем ошибку
             setErrorPassSettings('New password must be 3 - 32 characters');
-        } else if(inputPassNew !== inputPassConfirm){
+        } else if (inputPassNew !== inputPassConfirm) {
             // если значение инпута нового пароля не равно значению инпута подтвержденного пароля,то показываем ошибку
             setErrorPassSettings('Passwords don`t match ');
         } else {
 
-            // здесь будем уже обрабатывать запрос на сервер для изменения пароля пользователя с помощью try catch
+            // здесь обрабатываем запрос на сервер для изменения пароля пользователя с помощью try catch(чтобы отлавливать ошибки,можно было сделать это с помощью react query,но в данном случае уже сделали так)
 
-            try{
+            try {
 
-                const response = await changePassInDb(user.id,inputPassCurrent,inputPassNew); // вызываем нашу функцию запроса на сервер для изменения пароля пользователя,передаем туда user.id(id пользователя) и значения инпутов текущего пароля и нового пароля
+                const response = await changePassInDb(user.id, inputPassCurrent, inputPassNew); // вызываем нашу функцию запроса на сервер для изменения пароля пользователя,передаем туда user.id(id пользователя) и значения инпутов текущего пароля и нового пароля
 
                 console.log(response.data);
 
-            }catch(e:any){
+            } catch (e: any) {
 
                 console.log(e.response?.data?.message); // выводим ошибку в логи
 
@@ -223,7 +233,7 @@ const UserPage = () => {
 
             }
 
-            
+
             setErrorPassSettings(''); // изменяем состояние ошибки в форме для изменения пароля пользователя на пустую строку,то есть убираем ошибку 
 
             // изменяем состояния инпутов на пустые строки(то есть убираем у них значения)
@@ -233,6 +243,35 @@ const UserPage = () => {
 
         }
 
+    }
+
+
+    const selectItemHandlerBurgers = () => {
+
+        setSelectBlockAdminFormValue('Burgers'); // изменяем состояние selectBlockValue на значение Rating
+
+        setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+    }
+
+    const selectItemHandlerDrinks = () => {
+
+        setSelectBlockAdminFormValue('Drinks'); // изменяем состояние selectBlockValue на значение Rating
+
+        setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+    }
+
+    const selectItemHandlerPizza = () => {
+
+        setSelectBlockAdminFormValue('Pizza'); // изменяем состояние selectBlockValue на значение Rating
+
+        setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+    }
+
+    const selectItemHandlerSandwiches = () => {
+
+        setSelectBlockAdminFormValue('Sandwiches'); // изменяем состояние selectBlockValue на значение Rating
+
+        setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
     }
 
 
@@ -281,10 +320,28 @@ const UserPage = () => {
                                     <img src="/images/sectionUserPage/dashboard 2.png" alt="" className="leftBar__item-img" />
                                     <button className="leftBar__menu-btn" >Dashboard</button>
                                 </li>
-                                <li className={tab === 'Account Settings' ? "leftBar__menu-item leftBar__menu-item--active" : "leftBar__menu-item"} onClick={() => setTab('Account Settings')}>
-                                    <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__item-img" />
-                                    <button className={tab === 'Account Settings' ? "leftBar__menu-btn leftBar__menu-btn--active" : "leftBar__menu-btn"} >Account Settings</button>
-                                </li>
+
+
+                                {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем таб с настройками профиля пользователя */}
+                                {user.role === 'USER' &&
+
+                                    <li className={tab === 'Account Settings' ? "leftBar__menu-item leftBar__menu-item--active" : "leftBar__menu-item"} onClick={() => setTab('Account Settings')}>
+                                        <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__item-img" />
+                                        <button className={tab === 'Account Settings' ? "leftBar__menu-btn leftBar__menu-btn--active" : "leftBar__menu-btn"} >Account Settings</button>
+                                    </li>
+
+                                }
+
+                                {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN"),то показываем таб с панелью администратора */}
+                                {user.role === 'ADMIN' &&
+
+                                    <li className={tab === 'Admin Panel' ? "leftBar__menu-item leftBar__menu-item--active" : "leftBar__menu-item"} onClick={() => setTab('Admin Panel')}>
+                                        <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__item-img" />
+                                        <button className={tab === 'Account Settings' ? "leftBar__menu-btn leftBar__menu-btn--active" : "leftBar__menu-btn"} >Admin Panel</button>
+                                    </li>
+
+                                }
+
                             </ul>
 
                             <div className="leftBar__menu-item" onClick={logout}>
@@ -300,12 +357,23 @@ const UserPage = () => {
                                         <img src="/images/sectionUserPage/Ellipse 5.png" alt="" className="dashboard__img" />
                                         <h3 className="dashboard__name">{user.userName}</h3>
                                         <p className="dashboard__email">{user.email}</p>
-                                        <button className="dashboard__btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
+
+                                        {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем кнопку, по которой можно перейти в настройки аккаунта пользователя*/}
+                                        {user.role === 'USER' &&
+                                            <button className="dashboard__btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
+                                        }
+
+                                        {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN"),то показываем кнопку,по которой можно перейти в админ панель */}
+                                        {user.role === 'ADMIN' &&
+                                            <button className="dashboard__btn" onClick={() => setTab('Admin Panel')}>Go to Admin Panel</button>
+                                        }
+
                                     </div>
                                 </div>
                             }
 
-                            {tab === 'Account Settings' &&
+                            {/* если user.role === 'USER'(то есть если роль пользователя равна "USER") и tab === 'Account Settings',то показываем таб с настройками профиля пользователя */}
+                            {user.role === 'USER' && tab === 'Account Settings' &&
                                 <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-accountSettings">
 
                                     <form action="" className="settings__accountSettings-form" onSubmit={onSubmitAccSettingsForm}>
@@ -339,17 +407,17 @@ const UserPage = () => {
 
                                                 {/* если passHideCurrent true(то есть состояние для кнопки скрытия пароля инпута true), то указываем тип инпуту как password(чтобы были точки вместо символов), в другом случае тип как text */}
                                                 <input type={passHideCurrent ? "password" : "text"} className="signInMain__inputEmailBlock-input accountSettings__input" placeholder="Current Password" value={inputPassCurrent} onChange={(e) => setInputPassCurrent(e.target.value)} />
-                                                <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="passwordSettings__item-img" onClick={()=>setPassHideCurrent((prev)=>!prev)}/>
+                                                <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="passwordSettings__item-img" onClick={() => setPassHideCurrent((prev) => !prev)} />
                                             </div>
                                             <div className="accountSettings__form-item passwordSettings__item">
                                                 <p className="accountSettings__form-text">New Password</p>
                                                 <input type={passHideNew ? "password" : "text"} className="signInMain__inputEmailBlock-input accountSettings__input" placeholder="New Password" value={inputPassNew} onChange={(e) => setInputPassNew(e.target.value)} />
-                                                <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="passwordSettings__item-img" onClick={()=>setPassHideNew((prev)=>!prev)}/>
+                                                <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="passwordSettings__item-img" onClick={() => setPassHideNew((prev) => !prev)} />
                                             </div>
                                             <div className="accountSettings__form-item passwordSettings__item">
                                                 <p className="accountSettings__form-text">Confirm Password</p>
-                                                <input type={passHideConfirm ? "password" : "text"}  className="signInMain__inputEmailBlock-input accountSettings__input" placeholder="Confirm Password" value={inputPassConfirm} onChange={(e) => setInputPassConfirm(e.target.value)} />
-                                                <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="passwordSettings__item-img" onClick={()=>setPassHideConfirm((prev)=>!prev)}/>
+                                                <input type={passHideConfirm ? "password" : "text"} className="signInMain__inputEmailBlock-input accountSettings__input" placeholder="Confirm Password" value={inputPassConfirm} onChange={(e) => setInputPassConfirm(e.target.value)} />
+                                                <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="passwordSettings__item-img" onClick={() => setPassHideConfirm((prev) => !prev)} />
                                             </div>
 
                                             {/* если errorPassSettings true(то есть в состоянии errorPassSettings что-то есть),то показываем текст ошибки */}
@@ -363,6 +431,58 @@ const UserPage = () => {
                                         </div>
                                     </form>
 
+                                </div>
+                            }
+
+                            {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN") и tab === 'Admin Panel',то показываем таб с панелью администратора */}
+                            {user.role === 'ADMIN' && tab === 'Admin Panel' &&
+                                <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-adminPanel">
+                                    <form action="" className="settings__accountSettings-form">
+                                        <h2 className="accountSettings__form-title">New Meal</h2>
+                                        <div className="accountSettings__form-main">
+                                            <div className="accountSettings__form-item">
+                                                <p className="accountSettings__form-text">Name</p>
+                                                <input type="text" className="signInMain__inputEmailBlock-input accountSettings__input" placeholder="Name" value={inputNameMealProduct} onChange={(e) => setInputNameMealProduct(e.target.value)} />
+                                            </div>
+
+                                            <div className="sectionCatalog__main-topSelect adminForm__select">
+                                                <p className="topSelect__text adminForm__topSelect-text">Category</p>
+                                                <div className="topSelect__inner">
+                                                    <div className="topSelect__selectTop adminForm__topSelect-selectTop" onClick={() => setSelectBlockAdminFormActive((prev) => !prev)}>
+                                                        <p className="topSelect__selectTop-text adminForm__topSelect-selectTopText">{selectBlockAdminFormValue}</p>
+                                                        <img src="/images/sectionCatalog/CaretDown.png" alt="" className={selectBlockAdminFormActive ? "topSelect__selectTop-img topSelect__selectTop-imgActive" : "topSelect__selectTop-img"} />
+                                                    </div>
+                                                    <div className={selectBlockAdminFormActive ? "topSelect__optionsBlock topSelect__optionsBlock--active adminForm__topSelect-optionsBlockActive" : "topSelect__optionsBlock"}>
+                                                        <div className="topSelect__optionsBlock-item" onClick={selectItemHandlerBurgers}>
+                                                            <p className="optionsBlock__item-text">Burgers</p>
+                                                        </div>
+                                                        <div className="topSelect__optionsBlock-item" onClick={selectItemHandlerDrinks}>
+                                                            <p className="optionsBlock__item-text">Drinks</p>
+                                                        </div>
+                                                        <div className="topSelect__optionsBlock-item" onClick={selectItemHandlerPizza}>
+                                                            <p className="optionsBlock__item-text">Pizza</p>
+                                                        </div>
+                                                        <div className="topSelect__optionsBlock-item" onClick={selectItemHandlerSandwiches}>
+                                                            <p className="optionsBlock__item-text">Sandwiches</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* здесь еще добавим компоненты админ формы для создания нового товара(блюда) */}
+
+
+
+                                            {/* если errorAdminForm true(то есть в состоянии errorAdminForm что-то есть),то показываем текст ошибки */}
+                                            {errorAdminForm &&
+                                                <p className="formErrorText">{errorAdminForm}</p>
+                                            }
+
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button className="accountSettings__form-btn" type="submit">Save Meal</button>
+
+                                        </div>
+                                    </form>
                                 </div>
                             }
 

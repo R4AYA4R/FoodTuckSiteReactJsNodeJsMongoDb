@@ -16,6 +16,9 @@ import router from './router/router.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
 import roleModel from './models/roleModel.js';
 
+import bcrypt from 'bcrypt'; // импортируем bcrypt для хеширования пароля(в данном случае импортируем вручную)
+import userModel from './models/userModel.js';
+
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
 const PORT = process.env.PORT || 5000; // указываем переменную PORT и даем ей значение как у переменной PORT из файла .env,если такой переменной нет,то указываем значение 5000
@@ -64,6 +67,14 @@ const start = async () => {
         // await roleModel.create({value:"USER"});
 
         // await roleModel.create({value:"ADMIN"});
+
+
+        // создаем объект пользователя в сущности users(пользователи) в базе данных 1 раз с ролью ADMIN,чтобы там он просто был и потом можно было только входить в аккаунт этого админа,после этого код закомментировали
+        // const hashPassword = await bcrypt.hash("adminFoodtuck",3); // хешируем пароль в данном случае для админа("adminFoodtuck") с помощью функции hash() у bcrypt,первым параметром передаем пароль,а вторым - соль,степень хеширования(чем больше - тем лучше захешируется,но не нужно слишком большое число,иначе будет долго хешироваться пароль)
+
+        // const adminRole = await roleModel.findOne({value:"ADMIN"}); // получаем роль из базы данных со значением ADMIN и помещаем ее в переменную adminRole,изменяем значение value на ADMIN,чтобы зарегестрировать роль администратора
+
+        // const adminCreated = await userModel.create({email:"adminFoodtuck@gmail.com",password:hashPassword,userName:"Admin",role:adminRole.value}); // создаем объект с полями email и password в базу данных и помещаем этот объект в переменную adminCreated,в поле password помещаем значение из переменной hashPassword,то есть уже захешированный пароль,и указываем в объекте еще поле userName,в поле role указываем наш adminRole.value(значение роли,которую мы получили из базы данных выше),так как мы получили объект из базы данных,а нам надо из него достать само значение),то есть таким образом указываем пользователю роль "ADMIN")
 
     }catch(e){
         console.log(e);
