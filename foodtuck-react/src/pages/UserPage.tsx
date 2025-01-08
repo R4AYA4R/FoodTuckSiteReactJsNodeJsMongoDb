@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import SectionSignUpTop from "../components/SectionSignUpTop";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
 import UserFormComponent from "../components/UserFormComponent";
@@ -47,6 +47,11 @@ const UserPage = () => {
     const [selectBlockAdminFormActive, setSelectBlockAdminFormActive] = useState(false);
 
     const [selectBlockAdminFormValue, setSelectBlockAdminFormValue] = useState(''); // состояние для значения селекта категорий
+
+    const [inputAmountValue, setInputAmountValue] = useState(1); // состояние для инпута цены в форме создания нового товара
+
+    const [imgPath, setImgPath] = useState(''); // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем(админом) картинку уже полученную от сервера, когда туда ее загрузим)
+
 
     const [errorAdminForm, setErrorAdminForm] = useState('');
 
@@ -246,6 +251,26 @@ const UserPage = () => {
     }
 
 
+    // функция для формы создания нового товара для админа,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitNewMealAdminForm = (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        // если значение инпута названия продукта,из которого убрали пробелы с помощью trim() равно пустой строке,то выводим ошибку(то есть если без пробелов это значение равно пустой строке,то показываем ошибку) или если это значение меньше 3
+        if (inputNameMealProduct.trim() === '' || inputNameMealProduct.length < 3) {
+
+            setErrorAdminForm('Product name must be more than 2 characters');
+
+        } else if (selectBlockAdminFormValue === '') {
+            // если состояние значения селекта категорий равно пустой строке,то показываем ошибку
+            setErrorAdminForm('Choose category');
+
+        } 
+        // здесь дальше будем делать другие условия
+
+    }
+
+
     const selectItemHandlerBurgers = () => {
 
         setSelectBlockAdminFormValue('Burgers'); // изменяем состояние selectBlockValue на значение Rating
@@ -272,6 +297,57 @@ const UserPage = () => {
         setSelectBlockAdminFormValue('Sandwiches'); // изменяем состояние selectBlockValue на значение Rating
 
         setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+    }
+
+
+    const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        // если текущее значение инпута > 99,то изменяем состояние инпута цены на 99,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+        if (+e.target.value > 99) {
+
+            setInputAmountValue(99);
+
+        } else if (+e.target.value <= 0) {
+
+            // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+            setInputAmountValue(0);
+
+        } else {
+
+            setInputAmountValue(+e.target.value);  // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+
+        }
+
+    }
+
+    const handlerMinusAmountBtn = () => {
+
+        // если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля не отнимало - 1
+        if (inputAmountValue > 1) {
+
+            setInputAmountValue((prev) => prev - 1);
+
+        } else {
+
+            setInputAmountValue(1);
+
+        }
+
+    }
+
+    const handlerPlusAmountBtn = () => {
+
+        // если значение инпута количества товара меньше 99 и больше или равно 0,то изменяем это значение на + 1,в другом случае указываем ему значение 99,чтобы больше 99 не увеличивалось
+        if (inputAmountValue < 99 && inputAmountValue >= 0) {
+
+            setInputAmountValue((prev) => prev + 1);
+
+        } else {
+
+            setInputAmountValue(99);
+
+        }
+
     }
 
 
@@ -437,7 +513,7 @@ const UserPage = () => {
                             {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN") и tab === 'Admin Panel',то показываем таб с панелью администратора */}
                             {user.role === 'ADMIN' && tab === 'Admin Panel' &&
                                 <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-adminPanel">
-                                    <form action="" className="settings__accountSettings-form">
+                                    <form action="" className="settings__accountSettings-form" onSubmit={onSubmitNewMealAdminForm}>
                                         <h2 className="accountSettings__form-title">New Meal</h2>
                                         <div className="accountSettings__form-main">
                                             <div className="accountSettings__form-item">
@@ -469,9 +545,34 @@ const UserPage = () => {
                                                 </div>
                                             </div>
 
-                                            {/* здесь еще добавим компоненты админ формы для создания нового товара(блюда) */}
+                                            <div className="accountSettings__form-item">
+                                                <p className="accountSettings__form-text">Price</p>
+                                                <div className="sectionProductItemPage__bottomBlock-inputBlock adminForm__inputBlock">
+                                                    <button className="sectionProductItemPage__inputBlock-minusBtn" onClick={handlerMinusAmountBtn}>
+                                                        <img src="/images/sectionProductItemPage/Minus (1).png" alt="" className="sectionProductItemPage__inputBlock-minusImg" />
+                                                    </button>
+                                                    <input type="number" className="sectionProductItemPage__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                                                    <button className="sectionProductItemPage__inputBlock-plustBtn" onClick={handlerPlusAmountBtn}>
+                                                        <img src="/images/sectionProductItemPage/Plus.png" alt="" className="sectionProductItemPage__inputBlock-plusImg" />
+                                                    </button>
+                                                </div>
+                                            </div>
 
+                                            <div className="adminForm__loadImageBlock">
+                                                <label htmlFor="inputFileImage" className="adminForm__loadImageBlock-label">
+                                                    Load Image
+                                                    {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа */}
+                                                    <input type="file" className="adminForm__loadImageBlock-input" id="inputFileImage" accept="image/*" />
+                                                </label>
+                                            </div>
 
+                                            {/* если imgPath не равно пустой строке,то показываем картинку  */}
+                                            {imgPath !== '' &&
+                                                <div className="adminForm__imageBlock">
+                                                    <img src={imgPath} alt="" className="adminForm__previewImg" />
+                                                    <p className="adminForm__imageBlock-text">Image Name</p>
+                                                </div>
+                                            }
 
                                             {/* если errorAdminForm true(то есть в состоянии errorAdminForm что-то есть),то показываем текст ошибки */}
                                             {errorAdminForm &&

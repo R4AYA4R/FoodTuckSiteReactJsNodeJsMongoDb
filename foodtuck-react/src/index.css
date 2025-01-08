@@ -775,10 +775,10 @@ a {
 .topSelect__selectTop-img {
     max-width: 20px;
     transform: rotate(0deg);
-    transition:all .5s ease;
+    transition: all .5s ease;
 }
 
-.topSelect__selectTop-imgActive{
+.topSelect__selectTop-imgActive {
     transform: rotate(180deg);
 }
 
@@ -1903,54 +1903,96 @@ a {
     background-color: #1c8f1f;
 }
 
-.settings__passSettings-form{
+.settings__passSettings-form {
     margin-top: 30px;
 }
 
-.passwordSettings__item{
+.passwordSettings__item {
     position: relative;
 }
 
-.passwordSettings__item-img{
+.passwordSettings__item-img {
     position: absolute;
     top: 35px;
     right: 15px;
     opacity: 1;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.passwordSettings__item-img:hover{
+.passwordSettings__item-img:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.sectionUserPage__mainBlock-adminPanel{
+.sectionUserPage__mainBlock-adminPanel {
     padding: 0;
     border: none;
     border-radius: none;
 }
 
-.adminForm__select{
+.adminForm__select {
     display: block;
     max-width: 300px;
     margin-bottom: 16px;
 }
 
-.adminForm__topSelect-text{
+.adminForm__topSelect-text {
     color: #333333;
     font-size: 14px;
     font-weight: 400;
     margin-bottom: 6px;
 }
 
-.adminForm__topSelect-selectTopText{
+.adminForm__topSelect-selectTopText {
     font-size: 16px;
 }
 
-.adminForm__topSelect-selectTop{
-    border:1px solid #E0E0E0;
+.adminForm__topSelect-selectTop {
+    border: 1px solid #E0E0E0;
 }
 
-.adminForm__topSelect-optionsBlockActive{
+.adminForm__topSelect-optionsBlockActive {
     max-height: 200px;
+}
+
+.adminForm__inputBlock {
+    max-width: 181px;
+}
+
+.adminForm__loadImageBlock{
+    margin: 25px 0 17px 0;
+}
+
+.adminForm__loadImageBlock-label {
+    display: inline-block;
+    /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
+    background-color: #fff;
+    border: 2px solid #D5EDFD;
+    text-transform: uppercase;
+    color: #2DA5F3;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px 24px;
+    opacity: 1;
+    cursor: pointer;
+    transition: opacity .5s ease;
+}
+
+.adminForm__loadImageBlock-label:hover{
+    opacity: 0.5;
+}
+
+/* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,этот label будет иметь такую же функию,как и это инпут */
+.adminForm__loadImageBlock-input{
+    display: none;
+}
+
+.adminForm__previewImg{
+    display: block;
+    margin: 20px 0;
+    max-width: 312px;
+}
+
+.adminForm__imageBlock-text{
+    margin: 15px 0 20px;
 }
