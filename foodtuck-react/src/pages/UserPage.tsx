@@ -50,7 +50,12 @@ const UserPage = () => {
 
     const [inputAmountValue, setInputAmountValue] = useState(1); // состояние для инпута цены в форме создания нового товара
 
+
     const [imgPath, setImgPath] = useState(''); // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем(админом) картинку уже полученную от сервера, когда туда ее загрузим)
+
+    const [inputFile, setInputFile] = useState<File>(); // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File
+
+    const newProductImage = useRef<HTMLImageElement>(null); // используем useRef для подключения к html тегу картинки нового товара,чтобы взять у него ширину и проверить ее,в generic типе этого useRef указываем,что в этом useRef будет HTMLImageElement(то есть картинка)
 
 
     const [errorAdminForm, setErrorAdminForm] = useState('');
@@ -251,6 +256,93 @@ const UserPage = () => {
     }
 
 
+    // функция для выбора картинки с помощью инпута для файлов
+    const inputLoadImageHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+
+        // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов, если e.target.files true,то есть пользователь выбрал файл
+        if (e.target.files) {
+
+            setInputFile(e.target.files[0]); // помещаем в состояние файл,который выбрал пользователь,у files указываем тут [0],то есть берем первый элемент массива(по индексу 0) этих файлов инпута
+
+            const formData = new FormData(); // создаем объект на основе FormData(нужно,чтобы передавать файлы на сервер)
+
+            formData.append('image', e.target.files[0]); // добавляем в этот объект formData по ключу(названию) 'image' сам файл в e.target.files[0] по индексу 0 (первым параметром тут передаем название файла,вторым сам файл)
+
+            console.log(e.target.files[0]);
+
+
+            // оборачиваем в try catch,чтобы отлавливать ошибки и делаем пока такой запрос на сервер для загрузки файла на сервер,загружаем объект formData(лучше вынести это в отдельную функцию запроса на сервер но и так можно),указываем здесь наш инстанс axios ($api в данном случае),чтобы обрабатывать правильно запросы с access токеном и refresh токеном,в данном случае делаем запрос на бэкэнд для загрузки файла и там сразу будет проверка нашего authMiddleware на нашем node js сервере для проверки на access токен
+            try {
+
+                const response = await $api.post(`${API_URL}/uploadFile`, formData); // делаем запрос на сервер для сохранения файла на сервере и как тело запроса тут передаем formData
+
+                console.log(response);
+
+                setImgPath(`http://localhost:5000/${response.data.name}`); // помещаем в состояние imgPath путь до файла,то есть пишем путь до нашего сервера (http://localhost:5000/) в данном случае и добавляем название файла,который нужно показать,который есть в папке (в данном случае static) на нашем сервере,это название пришло от сервера
+
+                setErrorAdminForm(''); // убираем ошибку формы создания нового товара(чтобы если до этого пользователь выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
+
+            } catch (e:any) {
+
+                return setErrorAdminForm(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+            }
+
+
+        }
+
+    }
+
+    // функция для удаления файла на сервере,указываем тип fileName как string | undefined,так как иначе показывает ошибку,что нельзя передать параметр этой функции,если значение этого параметра undefined
+    const deleteFileRequest = async (fileName:string | undefined) => {
+
+        try{
+
+            const response = await axios.delete(`${API_URL}/deleteFile/${fileName}`); // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр fileName,чтобы на бэкэнде его достать,здесь уже используем обычный axios вместо нашего axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера уже не проверяем пользователя на access токен,так как проверяем это у запроса на загрузку файла на сервер(поэтому будет и так понятно,валидный(годен ли по сроку годности еще) ли access токен у пользователя или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            setImgPath(''); // изменяем состояние imgPath(пути картинки) на пустую строку,чтобы картинка не показывалась,если она не правильная по размеру и была удалена с сервера(иначе картинка показывается,даже если она удалена с сервера)
+
+
+        }catch(e:any){
+
+            setErrorAdminForm(e.response?.data?.message); // показываем ошибку в форме создания нового товара для админа
+
+        }
+
+    }
+
+    // при изменении imgPath проверяем ширину и высоту картинки,которую выбрал пользователь(мы помещаем путь до картинки на нашем сервере node js в тег img и к этому тегу img привязали useRef с помощью которого берем ширину и высоту картинки)
+    useEffect(()=>{
+
+        // используем тут setTimeout(код в этом callback будет выполнен через время,которое указали вторым параметром в setTimeout после запятой,это время указывается в миллисекундах,в данном случае этот код будет выполнен через 0.1 секунду(через 100 миллисекунд)),в данном случае это делаем для того,чтобы успела появится новая картинка,после того,как пользователь ее выбрал в ипнуте файлов,иначе не успевает появиться и показывает ширину картинки как 0
+        setTimeout(()=>{
+
+            console.log(newProductImage.current?.width);
+            console.log(newProductImage.current?.height);
+
+            // если newProductImage.current true,то есть в этом useRef что-то есть(эта проверка просто потому что этот useRef может быть undefined и выдает ошибку об этом)
+            if(newProductImage.current){
+
+                if(newProductImage.current.width < 312 || newProductImage.current.height < 267){
+                    // если newProductImage.current.width меньше 312(то есть если ширина картинки меньше 312),или если высота картинки меньше 267,то показываем ошибку
+
+                    setErrorAdminForm('Width of image must be more than 311px and height must be more than 266px');
+
+                    // делаем удаление файла(картинки) на сервере,который не правильного размера ширины и высоты,так как если не удалять,а нужна конкретная ширина и высота картинки,то файлы будут просто скачиваться на наш node js сервер и не удаляться,поэтому отдельно делаем запрос на сервер на удаление файла
+                    deleteFileRequest(inputFile?.name); // передаем в нашу функцию название файла,который пользователь выбрал в инпуте файлов(мы поместили его в состояние inputFile),наша функция deleteFileRequest делает запрос на сервер на удаление файла и возвращает ответ от сервера(в данном случае при успешном запросе ответ от сервера будет объект с полями)
+
+                }
+
+            }
+
+
+        },100)
+
+    },[imgPath])
+
+
     // функция для формы создания нового товара для админа,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
     const onSubmitNewMealAdminForm = (e: FormEvent<HTMLFormElement>) => {
 
@@ -265,8 +357,15 @@ const UserPage = () => {
             // если состояние значения селекта категорий равно пустой строке,то показываем ошибку
             setErrorAdminForm('Choose category');
 
-        } 
-        // здесь дальше будем делать другие условия
+        } else if (!inputFile) {
+            // если состояние файла false(или null),то есть его(файла) нет,то показываем ошибку
+            setErrorAdminForm('Choose product image');
+        } else {
+
+            // здесь будем уже делать запрос на сервер для создания нового товара
+
+        }
+
 
     }
 
@@ -562,15 +661,15 @@ const UserPage = () => {
                                                 <label htmlFor="inputFileImage" className="adminForm__loadImageBlock-label">
                                                     Load Image
                                                     {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа */}
-                                                    <input type="file" className="adminForm__loadImageBlock-input" id="inputFileImage" accept="image/*" />
+                                                    <input type="file" className="adminForm__loadImageBlock-input" id="inputFileImage" accept="image/*" onChange={inputLoadImageHandler} />
                                                 </label>
                                             </div>
 
                                             {/* если imgPath не равно пустой строке,то показываем картинку  */}
                                             {imgPath !== '' &&
                                                 <div className="adminForm__imageBlock">
-                                                    <img src={imgPath} alt="" className="adminForm__previewImg" />
-                                                    <p className="adminForm__imageBlock-text">Image Name</p>
+                                                    <img src={imgPath} alt="" className="adminForm__previewImg" ref={newProductImage} />
+                                                    <p className="adminForm__imageBlock-text">{inputFile?.name}</p> {/* указываем название файла у состояния inputFile у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFile может быть undefined */}
                                                 </div>
                                             }
 
