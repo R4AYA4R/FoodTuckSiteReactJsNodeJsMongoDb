@@ -19,6 +19,8 @@ router.get('/getCommentsForProduct',userController.getCommentsForProduct); // с
 
 router.put('/updateProductRating',userController.updateProductRating); // создаем put запрос для обновления рейтинга товара 
 
+router.put('/updateProductRatingCart',userController.updateProductRatingCart); // создаем put запрос для обновления рейтинга товара корзины
+
 
 router.post('/createMealCart',mealController.createMealCart); // создаем post запрос для создания товара(блюда) в корзине
 

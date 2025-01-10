@@ -107,6 +107,26 @@ const ProductItemPage = () => {
         }
     })
 
+    // описываем запрос на сервер для обновления рейтинга товаров корзины,чтобы когда обновлялись комментарии и рейтинг обычного товара каталога,то обновлялся и рейтинг этого же товара в корзине у всех пользователей,у которых он есть,если так не сделать,то рейтинг товара корзины не будет обновляться при обновлении комментариев и рейтинга обычного товара каталога
+    const { mutate: mutateRatingCartMeals } = useMutation({
+        mutationKey: ['updateRatingProductCart'],
+        mutationFn: async (meal: IMeal) => {
+
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IMeal),но здесь не обязательно указывать тип
+            await axios.put<IMeal>(`${API_URL}/updateProductRatingCart`, meal);
+
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем массив товаров корзины
+        onSuccess() {
+
+            refetchMealsCart();
+
+        }
+
+    })
+
+
     const { mutate: mutateAddMealCart } = useMutation({
         mutationKey: ['add mealCart'],
         mutationFn: async (mealCart: IMealCart) => {
@@ -229,6 +249,8 @@ const ProductItemPage = () => {
             const commentsRatingMiddle = commentsRating / dataComments?.data.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.data.length(длину массива комментариев)
 
             mutateRating({ ...data?.data, rating: commentsRatingMiddle } as IMeal); // делаем запрос на изменение рейтинга у товара(в данном случае блюда),разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IMeal(в данном случае делаем это,так как выдает ошибку,что id может быть undefined)
+
+            mutateRatingCartMeals({...data?.data,rating:commentsRatingMiddle} as IMeal); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
 
         }
 
