@@ -12,7 +12,8 @@ const ProductsItem = ({meal}:IProductsItemProps) => {
     return (
         // этому диву в onClick указываем router() и указываем url,по которому нужно будет перекинуть пользователя,в данном случае указываем url для страницы блюда,через / после /catalog указываем id у блюда,чтобы перекинуть на страницу с его id(мы этот динамический параметр id указывали при создании Routes(маршрутов) в файле App.tsx,поэтому указываем тут id блюда,чтобы сработал маршрут показа страницы для отдельного блюда)
         <div className="products__item" onClick={()=>router(`/catalog/${meal._id}`)}>
-            <img src={`/images/sectionMenu/${meal.image}`} alt="" className="products__item-img" />
+            {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля image у meal(объекта товара(блюда)) */}
+            <img src={`http://localhost:5000/${meal.image}`} alt="" className="products__item-img" />
             <div className="products__item-stars">
                 <img src={meal.rating === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="products__stars-imgYellow" />
                 <img src={meal.rating >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow" />

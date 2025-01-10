@@ -38,6 +38,8 @@ router.post('/uploadFile',authMiddleware,userController.uploadFile); // указ
 
 router.delete('/deleteFile/:fileName',userController.deleteFile); // указываем delete запрос для удаления файла с нашего node js сервера(в данном случае из папки static),delete запрос не имеет тела запроса и все параметры передаются через строку,тут указываем через :(двоеточие) динамический параметр fileName,то есть этот параметр может меняться(в данном случае этот параметр нужен,чтобы удалить файл из папки static по этому названию fileName)
 
+router.post('/addNewMealCatalog',authMiddleware,userController.addNewMealCatalog); // создаем post запрос для создания нового товара в базе данных
+
 
 router.post('/registration',
     body('email').isEmail(),

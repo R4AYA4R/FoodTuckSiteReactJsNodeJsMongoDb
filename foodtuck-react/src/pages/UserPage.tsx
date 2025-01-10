@@ -6,10 +6,11 @@ import { useTypedSelector } from "../hooks/useTypedSelector";
 import SectionUserPageTop from "../components/SectionUserPageTop";
 import { useActions } from "../hooks/useActions";
 import axios from "axios";
-import { AuthResponse } from "../types/types";
+import { AuthResponse, IMeal } from "../types/types";
 import $api, { API_URL } from "../http/http";
 import AuthService from "../service/AuthService";
 import { useLocation } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 const UserPage = () => {
 
@@ -48,19 +49,32 @@ const UserPage = () => {
 
     const [selectBlockAdminFormValue, setSelectBlockAdminFormValue] = useState(''); // состояние для значения селекта категорий
 
-    const [inputAmountValue, setInputAmountValue] = useState(1); // состояние для инпута цены в форме создания нового товара
+    const [inputPriceValue, setInputPriceValue] = useState(1); // состояние для инпута цены в форме создания нового товара
 
 
     const [imgPath, setImgPath] = useState(''); // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем(админом) картинку уже полученную от сервера, когда туда ее загрузим)
 
-    const [inputFile, setInputFile] = useState<File>(); // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File
+    const [inputFile, setInputFile] = useState<File | null>(); // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File
 
     const newProductImage = useRef<HTMLImageElement>(null); // используем useRef для подключения к html тегу картинки нового товара,чтобы взять у него ширину и проверить ее,в generic типе этого useRef указываем,что в этом useRef будет HTMLImageElement(то есть картинка)
 
 
     const [errorAdminForm, setErrorAdminForm] = useState('');
 
+    const [errorAdminFormForImg, setErrorAdminFormForImg] = useState('');
 
+
+    // функция для post запроса на сервер с помощью useMutation(react query),создаем новый товар на сервере,берем mutate у useMutation,чтобы потом вызвать эту функцию запроса на сервер в нужный момент
+    const { mutate, data, error } = useMutation({
+        mutationKey: ['create newMealCatalog'],
+        mutationFn: async (mealCatalog: IMeal) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IMeal),но здесь не обязательно указывать тип,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+            await $api.post<IMeal, any>(`${API_URL}/addNewMealCatalog`, mealCatalog);
+
+        }
+
+    })
 
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
     const changeAccInfoInDb = async (userId: number, name: string, email: string) => {
@@ -259,8 +273,8 @@ const UserPage = () => {
     // функция для выбора картинки с помощью инпута для файлов
     const inputLoadImageHandler = async (e: ChangeEvent<HTMLInputElement>) => {
 
-        // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов, если e.target.files true,то есть пользователь выбрал файл
-        if (e.target.files) {
+        // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов, если e.target.files true(делаем эту проверку,потому что выдает ошибку,что e.target.files может быть null) и e.target.files[0] true,то есть пользователь выбрал файл
+        if (e.target.files && e.target.files[0]) {
 
             setInputFile(e.target.files[0]); // помещаем в состояние файл,который выбрал пользователь,у files указываем тут [0],то есть берем первый элемент массива(по индексу 0) этих файлов инпута
 
@@ -282,9 +296,11 @@ const UserPage = () => {
 
                 setErrorAdminForm(''); // убираем ошибку формы создания нового товара(чтобы если до этого пользователь выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
 
-            } catch (e:any) {
+                setErrorAdminFormForImg('');
 
-                return setErrorAdminForm(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+            } catch (e: any) {
+
+                return setErrorAdminFormForImg(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
 
             }
 
@@ -294,9 +310,9 @@ const UserPage = () => {
     }
 
     // функция для удаления файла на сервере,указываем тип fileName как string | undefined,так как иначе показывает ошибку,что нельзя передать параметр этой функции,если значение этого параметра undefined
-    const deleteFileRequest = async (fileName:string | undefined) => {
+    const deleteFileRequest = async (fileName: string | undefined) => {
 
-        try{
+        try {
 
             const response = await axios.delete(`${API_URL}/deleteFile/${fileName}`); // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр fileName,чтобы на бэкэнде его достать,здесь уже используем обычный axios вместо нашего axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера уже не проверяем пользователя на access токен,так как проверяем это у запроса на загрузку файла на сервер(поэтому будет и так понятно,валидный(годен ли по сроку годности еще) ли access токен у пользователя или нет)
 
@@ -305,30 +321,32 @@ const UserPage = () => {
             setImgPath(''); // изменяем состояние imgPath(пути картинки) на пустую строку,чтобы картинка не показывалась,если она не правильная по размеру и была удалена с сервера(иначе картинка показывается,даже если она удалена с сервера)
 
 
-        }catch(e:any){
+        } catch (e: any) {
 
-            setErrorAdminForm(e.response?.data?.message); // показываем ошибку в форме создания нового товара для админа
+            setErrorAdminFormForImg(e.response?.data?.message); // показываем ошибку в форме создания нового товара для админа
 
         }
 
     }
 
     // при изменении imgPath проверяем ширину и высоту картинки,которую выбрал пользователь(мы помещаем путь до картинки на нашем сервере node js в тег img и к этому тегу img привязали useRef с помощью которого берем ширину и высоту картинки)
-    useEffect(()=>{
+    useEffect(() => {
 
         // используем тут setTimeout(код в этом callback будет выполнен через время,которое указали вторым параметром в setTimeout после запятой,это время указывается в миллисекундах,в данном случае этот код будет выполнен через 0.1 секунду(через 100 миллисекунд)),в данном случае это делаем для того,чтобы успела появится новая картинка,после того,как пользователь ее выбрал в ипнуте файлов,иначе не успевает появиться и показывает ширину картинки как 0
-        setTimeout(()=>{
+        setTimeout(() => {
 
             console.log(newProductImage.current?.width);
             console.log(newProductImage.current?.height);
 
             // если newProductImage.current true,то есть в этом useRef что-то есть(эта проверка просто потому что этот useRef может быть undefined и выдает ошибку об этом)
-            if(newProductImage.current){
+            if (newProductImage.current) {
 
-                if(newProductImage.current.width < 312 || newProductImage.current.height < 267){
+                if (newProductImage.current.width < 312 || newProductImage.current.height < 267) {
                     // если newProductImage.current.width меньше 312(то есть если ширина картинки меньше 312),или если высота картинки меньше 267,то показываем ошибку
 
-                    setErrorAdminForm('Width of image must be more than 311px and height must be more than 266px');
+                    setErrorAdminFormForImg('Width of image must be more than 311px and height must be more than 266px');
+
+                    setInputFile(null); // изменяем состояние для инпута файла картинки для нового товара(блюда),указываем ему значение как null,чтобы если админ получил ошибку,что размер картинки неправильный,то это состояние для файла картинки становилось null,иначе будет идти запрос на сервер,когда состояние файла картинки пустое,и тогда будет ошибка на сервере,что файл картинки пустой
 
                     // делаем удаление файла(картинки) на сервере,который не правильного размера ширины и высоты,так как если не удалять,а нужна конкретная ширина и высота картинки,то файлы будут просто скачиваться на наш node js сервер и не удаляться,поэтому отдельно делаем запрос на сервер на удаление файла
                     deleteFileRequest(inputFile?.name); // передаем в нашу функцию название файла,который пользователь выбрал в инпуте файлов(мы поместили его в состояние inputFile),наша функция deleteFileRequest делает запрос на сервер на удаление файла и возвращает ответ от сервера(в данном случае при успешном запросе ответ от сервера будет объект с полями)
@@ -338,13 +356,13 @@ const UserPage = () => {
             }
 
 
-        },100)
+        }, 100)
 
-    },[imgPath])
+    }, [imgPath])
 
 
     // функция для формы создания нового товара для админа,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
-    const onSubmitNewMealAdminForm = (e: FormEvent<HTMLFormElement>) => {
+    const onSubmitNewMealAdminForm = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
@@ -358,11 +376,68 @@ const UserPage = () => {
             setErrorAdminForm('Choose category');
 
         } else if (!inputFile) {
-            // если состояние файла false(или null),то есть его(файла) нет,то показываем ошибку
-            setErrorAdminForm('Choose product image');
+            // если состояние файла false(или null),то есть его(файла) нет,то показываем ошибку,в данном случае указываем ошибку у состояния errorAdminFormForImg,так как разделии состояния ошибок всяких инпутов формы и ошибки,связанные с картинкой для нового товара(блюда),так сделали,чтобы правильно обработать ошибки
+            setErrorAdminFormForImg('Choose product image');
+        } else if (inputPriceValue < 1) {
+            // если состояние цены нового товара(блюда) меньше 1,то показываем ошибку
+            setErrorAdminForm('Product price must be more than 0');
+        } else if (newProductImage.current && newProductImage.current.width < 312 || newProductImage.current && newProductImage.current.height < 267) {
+            // если newProductImage?.current true(то есть в этом useRef что-то есть(эта проверка просто потому что этот useRef может быть undefined и выдает ошибку об этом)) и newProductImage?.current?.width меньше 312(то есть если ширина картинки меньше 312 ),или если newProductImage?.current true и высота картинки меньше 267,то показываем ошибку
+            setErrorAdminForm('Width of image must be more than 311px and height must be more than 266px');
         } else {
 
-            // здесь будем уже делать запрос на сервер для создания нового товара
+            // если состояние ошибки формы для создания нового товара для админа равно пустой строке,то есть ошибки нет(делаем эту проверку,потому что при загрузке неправильной картинки товара на сервер мы показываем ошибку в другом useEffect,поэтому проверяем,нету ли ошибки,перед тем,как создать новый объект товара в базе данных)
+            if (errorAdminFormForImg === '') {
+
+                let priceFilter; // указываем переменную priceFilter,чтобы ее потом в зависимости от условий изменять
+
+                // если состояние цены нового товара(блюда) меньше 10,то изменяем priceFilter со значением как 'Under $10' и дальше так с другими условиями
+                if (inputPriceValue < 10) {
+
+                    priceFilter = 'Under $10'; // указываем значение переменной priceFilter как 'Under $10'
+
+                } else if (inputPriceValue >= 10 || inputPriceValue <= 20) {
+
+                    priceFilter = '$10-$20';
+
+                } else if (inputPriceValue > 20 || inputPriceValue <= 30) {
+
+                    priceFilter = '$20-$30';
+
+                } else if (inputPriceValue > 30) {
+
+                    priceFilter = 'Above $30';
+
+                }
+
+                // в image передаем название файла картинки,которую выбрал админ для нового товара(она уже будет загружена на наш node js сервер,если она будет правильного размера)
+                // mutate({ name: inputNameMealProduct, category: selectBlockAdminFormValue, price: inputPriceValue, priceFilter: priceFilter, amount: 1, rating: 0, totalPrice: inputPriceValue, image: inputFile.name } as IMeal);  // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем тип этого объекта as IMeal(то есть как на основе нашего типа IMeal, в данном случае это для того,чтобы не было ошибки,что priceFilter может быть undefined),указываем поле image как поле name у состояния inputFile(inputFile.name,то есть название файла,который выбрал пользователь(админ)),потом еще с помощью этого поля image еще будем удалять картинку товара из папки на сервере при удалении товара из каталога
+
+                // делаем свой запрос на сервер для создания нового объекта товара(блюда) в базе данных,не используем здесь useMutation(react query),чтобы обработать нормально ошибки от сервера,используем try catch для обработки ошибок
+                try {
+
+                    // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IMeal),но здесь не обязательно указывать тип,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+                    const response = await $api.post<IMeal>(`${API_URL}/addNewMealCatalog`, { name: inputNameMealProduct, category: selectBlockAdminFormValue, price: inputPriceValue, priceFilter: priceFilter, amount: 1, rating: 0, totalPrice: inputPriceValue, image: inputFile.name });  // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем тип этого объекта as IMeal(то есть как на основе нашего типа IMeal, в данном случае это для того,чтобы не было ошибки,что priceFilter может быть undefined),указываем поле image как поле name у состояния inputFile(inputFile.name,то есть название файла,который выбрал пользователь(админ)),потом еще с помощью этого поля image еще будем удалять картинку товара из папки на сервере при удалении товара из каталога, в image передаем название файла картинки,которую выбрал админ для нового товара(она уже будет загружена на наш node js сервер,если она будет правильного размера)
+
+                } catch (e: any) {
+
+                    console.log(e.response?.data?.message);
+
+                    return setErrorAdminForm(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+                }
+
+
+                setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа
+
+                // очищаем инпуты формы создания нового товара
+                setInputNameMealProduct('');
+                setSelectBlockAdminFormValue('');
+                setInputPriceValue(1);
+                setImgPath(''); // указываем состоянию пути картинки пустую строку,чтобы когда пользователь(админ) сохранил новый товар,то картинка не показывалась уже
+
+            }
+
 
         }
 
@@ -370,11 +445,21 @@ const UserPage = () => {
     }
 
 
+    const onChangeNameMealProduct = (e: ChangeEvent<HTMLInputElement>) => {
+
+        setInputNameMealProduct(e.target.value); // изменяем состояние для инпута имени нового товара(блюда)
+
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
+
+    }
+
     const selectItemHandlerBurgers = () => {
 
         setSelectBlockAdminFormValue('Burgers'); // изменяем состояние selectBlockValue на значение Rating
 
         setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
     }
 
     const selectItemHandlerDrinks = () => {
@@ -382,6 +467,9 @@ const UserPage = () => {
         setSelectBlockAdminFormValue('Drinks'); // изменяем состояние selectBlockValue на значение Rating
 
         setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
+
     }
 
     const selectItemHandlerPizza = () => {
@@ -389,6 +477,9 @@ const UserPage = () => {
         setSelectBlockAdminFormValue('Pizza'); // изменяем состояние selectBlockValue на значение Rating
 
         setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
+
     }
 
     const selectItemHandlerSandwiches = () => {
@@ -396,24 +487,29 @@ const UserPage = () => {
         setSelectBlockAdminFormValue('Sandwiches'); // изменяем состояние selectBlockValue на значение Rating
 
         setSelectBlockAdminFormActive(false); // изменяем состояние selectBlockActive на значение false,то есть убираем появившийся селект блок
+
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
+
     }
 
 
-    const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
+    const changeInputPriceValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
 
         // если текущее значение инпута > 99,то изменяем состояние инпута цены на 99,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
         if (+e.target.value > 99) {
 
-            setInputAmountValue(99);
+            setInputPriceValue(99);
 
         } else if (+e.target.value <= 0) {
 
             // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
-            setInputAmountValue(0);
+            setInputPriceValue(0);
 
         } else {
 
-            setInputAmountValue(+e.target.value);  // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+            setInputPriceValue(+e.target.value);  // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
 
         }
 
@@ -421,14 +517,16 @@ const UserPage = () => {
 
     const handlerMinusAmountBtn = () => {
 
-        // если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля не отнимало - 1
-        if (inputAmountValue > 1) {
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
 
-            setInputAmountValue((prev) => prev - 1);
+        // если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля не отнимало - 1
+        if (inputPriceValue > 1) {
+
+            setInputPriceValue((prev) => prev - 1);
 
         } else {
 
-            setInputAmountValue(1);
+            setInputPriceValue(1);
 
         }
 
@@ -436,14 +534,16 @@ const UserPage = () => {
 
     const handlerPlusAmountBtn = () => {
 
-        // если значение инпута количества товара меньше 99 и больше или равно 0,то изменяем это значение на + 1,в другом случае указываем ему значение 99,чтобы больше 99 не увеличивалось
-        if (inputAmountValue < 99 && inputAmountValue >= 0) {
+        setErrorAdminForm(''); // убираем ошибку формы для создания нового товара(блюда) для админа,убираем ее в данном случае,чтобы при изменении какого-либо из инпутов формы или кнопок она убиралась,а показываться будет(если все же ошибка есть) когда админ нажмет на кнопку для отправки формы
 
-            setInputAmountValue((prev) => prev + 1);
+        // если значение инпута количества товара меньше 99 и больше или равно 0,то изменяем это значение на + 1,в другом случае указываем ему значение 99,чтобы больше 99 не увеличивалось
+        if (inputPriceValue < 99 && inputPriceValue >= 0) {
+
+            setInputPriceValue((prev) => prev + 1);
 
         } else {
 
-            setInputAmountValue(99);
+            setInputPriceValue(99);
 
         }
 
@@ -617,7 +717,7 @@ const UserPage = () => {
                                         <div className="accountSettings__form-main">
                                             <div className="accountSettings__form-item">
                                                 <p className="accountSettings__form-text">Name</p>
-                                                <input type="text" className="signInMain__inputEmailBlock-input accountSettings__input" placeholder="Name" value={inputNameMealProduct} onChange={(e) => setInputNameMealProduct(e.target.value)} />
+                                                <input type="text" className="signInMain__inputEmailBlock-input accountSettings__input" placeholder="Name" value={inputNameMealProduct} onChange={onChangeNameMealProduct} />
                                             </div>
 
                                             <div className="sectionCatalog__main-topSelect adminForm__select">
@@ -647,11 +747,12 @@ const UserPage = () => {
                                             <div className="accountSettings__form-item">
                                                 <p className="accountSettings__form-text">Price</p>
                                                 <div className="sectionProductItemPage__bottomBlock-inputBlock adminForm__inputBlock">
-                                                    <button className="sectionProductItemPage__inputBlock-minusBtn" onClick={handlerMinusAmountBtn}>
+                                                    {/* указываем этой кнопке тип button(type="button"),чтобы при нажатии на нее не отправлялась эта форма(для создания нового товара(блюда)),указываем тип submit только одной кнопке формы,по которой она должна отправляться(то есть при нажатии на которую должен идти запрос на сервер для создания нового товара(блюда)),всем остальным кнопкам формы указываем тип button */}
+                                                    <button className="sectionProductItemPage__inputBlock-minusBtn" onClick={handlerMinusAmountBtn} type="button">
                                                         <img src="/images/sectionProductItemPage/Minus (1).png" alt="" className="sectionProductItemPage__inputBlock-minusImg" />
                                                     </button>
-                                                    <input type="number" className="sectionProductItemPage__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
-                                                    <button className="sectionProductItemPage__inputBlock-plustBtn" onClick={handlerPlusAmountBtn}>
+                                                    <input type="number" className="sectionProductItemPage__inputBlock-input" value={inputPriceValue} onChange={changeInputPriceValue} />
+                                                    <button className="sectionProductItemPage__inputBlock-plustBtn" onClick={handlerPlusAmountBtn} type="button">
                                                         <img src="/images/sectionProductItemPage/Plus.png" alt="" className="sectionProductItemPage__inputBlock-plusImg" />
                                                     </button>
                                                 </div>
@@ -676,6 +777,11 @@ const UserPage = () => {
                                             {/* если errorAdminForm true(то есть в состоянии errorAdminForm что-то есть),то показываем текст ошибки */}
                                             {errorAdminForm &&
                                                 <p className="formErrorText">{errorAdminForm}</p>
+                                            }
+
+                                            {/* если errorAdminFormForImg true(то есть в состоянии errorAdminFormForImg что-то есть),то показываем текст ошибки */}
+                                            {errorAdminFormForImg &&
+                                                <p className="formErrorText">{errorAdminFormForImg}</p>
                                             }
 
                                             {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}

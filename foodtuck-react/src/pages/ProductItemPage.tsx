@@ -206,6 +206,8 @@ const ProductItemPage = () => {
 
         refetch();
 
+        console.log(data?.data.price)
+
     }, [pathname])
 
     // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара
@@ -310,7 +312,8 @@ const ProductItemPage = () => {
                     <div className="sectionProductItemPage__inner">
                         <div className="sectionProductItemPage__top">
                             <div className="sectionProductItemPage__top-leftBlock">
-                                <img src={`/images/sectionMenu/${data?.data.image}`} alt="" className="sectionProductItemPage__leftBlock-img" />
+                                {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля image у data?.data.image(объекта товара(блюда)) */}
+                                <img src={`http://localhost:5000/${data?.data.image}`} alt="" className="sectionProductItemPage__leftBlock-img" />
                             </div>
                             <div className="sectionProductItemPage__top-rightBlock">
                                 <h2 className="sectionProductItemPage__rightBlock-title">{data?.data.name}</h2>

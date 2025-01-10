@@ -13,7 +13,8 @@ const MealsItem = ({ meal }: IMealProp) => {
     return (
         <div className="meals__item" onClick={() => router(`/catalog/${meal._id}`)}>
             <div className="meals__item-leftBlock">
-                <img src={`/images/sectionMenu/${meal.image}`} alt="" className="meals__item-img" />
+                {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля image у meal(объекта товара(блюда)) */}
+                <img src={`http://localhost:5000/${meal.image}`} alt="" className="meals__item-img" />
                 <div className="meals__item-info">
                     <h4 className="meals__info-title">{meal.name}</h4>
 

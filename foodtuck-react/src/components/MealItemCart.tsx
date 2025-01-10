@@ -5,6 +5,7 @@ import { useActions } from "../hooks/useActions";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "../http/http";
+import { useNavigate } from "react-router-dom";
 
 interface IMealItemCart {
 
@@ -16,6 +17,8 @@ interface IMealItemCart {
 
 // берем пропс(параметр) refetchMealsCart из пропсов этого компонента,эту функцию refetchMealsCart передаем как пропс(параметр) в этот компонент в файле Cart.tsx,эта функция для переобновления(повторный запрос на получение массива товаров(блюд)) массива товаров(блюд) корзины
 const MealItemCart = ({ mealCart, refetchMealsCart }: IMealItemCart) => {
+
+    const router = useNavigate(); // useNavigate может перемещатьтся на другую страницу вместо ссылок
 
     const [inputAmountValue, setInputAmountValue] = useState(mealCart.amount);
 
@@ -138,9 +141,10 @@ const MealItemCart = ({ mealCart, refetchMealsCart }: IMealItemCart) => {
     return (
         <div className="sectionCart__table-mealItem">
             <div className="table__mealItem-leftBlock">
-                <img src={`/images/sectionMenu/${mealCart.image}`} alt="" className="mealItem__leftBlock-img" />
+                {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля image у meal(объекта товара(блюда)), в onClick(то есть при клике на эту картинку) указываем,что перенаправляем пользователя по url /catalog/ mealCart.usualProductId(id объекта товара(блюда) из каталога),то есть переходим на страницу этого товара(блюда) в каталоге */}
+                <img src={`http://localhost:5000/${mealCart.image}`} alt="" className="mealItem__leftBlock-img" onClick={()=>router(`/catalog/${mealCart.usualProductId}`)}/>
                 <div className="mealItem__leftBlock-info">
-                    <p className="mealItem__info-name">{mealCart.name}</p>
+                    <p className="mealItem__info-name"  onClick={()=>router(`/catalog/${mealCart.usualProductId}`)}>{mealCart.name}</p>
                     <div className="products__item-stars">
                         <img src={mealCart.rating === 0 ? "/images/sectionCatalog/StarGrey.png" : "/images/sectionCatalog/StarYellow.png"} alt="" className="products__stars-imgYellow products__starsMealsItem-img" />
                         <img src={mealCart.rating >= 2 ? "/images/sectionCatalog/StarYellow.png" : "/images/sectionCatalog/StarGrey.png"} alt="" className="products__stars-imgYellow products__starsMealsItem-img" />

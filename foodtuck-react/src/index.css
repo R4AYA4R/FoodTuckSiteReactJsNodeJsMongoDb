@@ -842,6 +842,11 @@ a {
     margin: 5px 0 8px;
 }
 
+.products__item-img{
+    max-width: 312px;
+    max-height: 267px;
+}
+
 .products__item-price {
     color: #FF9F0D;
 }
@@ -1039,6 +1044,11 @@ a {
 
 .sectionProductItemPage {
     margin: 56px 0 88px;
+}
+
+.sectionProductItemPage__leftBlock-img{
+    max-width: 312px;
+    max-height: 267px;
 }
 
 .sectionProductItemPage__top {
@@ -1771,6 +1781,7 @@ a {
 
 .mealItem__leftBlock-img {
     max-width: 100px;
+    max-height: 86px;
 }
 
 .mealItem__leftBlock-img,
