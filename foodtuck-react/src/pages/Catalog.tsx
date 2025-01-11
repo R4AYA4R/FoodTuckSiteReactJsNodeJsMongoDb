@@ -600,7 +600,7 @@ const Catalog = () => {
 
                                     {data?.meals.map(meal =>
 
-                                        <ProductsItem key={meal._id} meal={meal} />)
+                                        <ProductsItem key={meal._id} meal={meal} refetchMealsCatalog={refetch} setPage={setPage}/>)
 
                                     }
 

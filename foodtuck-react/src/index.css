@@ -827,6 +827,30 @@ a {
     cursor: pointer;
 }
 
+.products__itemMain{
+    position: relative;
+}
+
+.products__item-deleteBtn{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: transparent;
+    border:none;
+    z-index: 5;
+    padding: 3px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:all .5s ease;
+}
+
+.products__item-deleteBtn:hover{
+    cursor: pointer;
+    border: 1px solid red;
+}
+
 .products__item:hover {
     opacity: 0.8;
 }
