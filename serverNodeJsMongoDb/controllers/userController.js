@@ -349,7 +349,7 @@ class UserController {
 
             // ищем все комментарии у которых productNameFor равен name объекта товара(блюда),который нужно удалить,который мы взяли из тела запроса
             const commentsForDeletedMeal = await commentModel.find({ productNameFor: mealCatalog.name });
-            
+
 
             // если commentsForDeletedMeal true,то есть комментарии для товара(блюда),который нужно удалить есть,то их удаляем из базы данных
             if (commentsForDeletedMeal) {
@@ -376,6 +376,55 @@ class UserController {
             fs.unlinkSync(filePath); // удаляем файл по такому пути,который находится в переменной filePath с помощью fs.unlinkSync(),у модуля fs для работы с файлами есть методы обычные(типа unlink) и Sync(типа unlinkSync), методы с Sync блокируют главный поток node js и код ниже этой строки не будет выполнен,пока не будет выполнен метод с Sync
 
             return res.json(deletedMealCatalog);  // возвращаем на клиент(фронтенд) удаленный объект товара
+
+
+        } catch (e) {
+
+            next(e); // вызываем функцию next()(параметр этой функции registration) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции registration,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+
+        }
+
+    }
+
+    async changePriceMealCatalog(req, res, next) {
+
+        // оборачиваем в блок try catch,чтобы отлавливать ошибки
+        try {
+
+            const mealCatalog = req.body; // достаем(деструктуризируем) из тела запроса весь объект запроса со всеми полями,которые мы передали с фронтенда(не используем здесь деструктуризацию типа деструктурировать из req.body {mealCatalog} в квадратных скобках,так как просто берем все тело запроса,то есть весь объект тела запроса,а не отдельные поля)
+
+            const foundedMealCatalog = await mealModel.findById(mealCatalog._id); // находим объект товара каталога с помощью findById(), у которого id равен _id(указываем здесь нижнее подчеркивание перед id,так как оно по дефолту идет у объектов базы данных mongodb с нижним подчеркиванием) товара,который хотим обновить,который взяли из тела запроса(mealCatalog._id)
+
+            foundedMealCatalog.price = mealCatalog.price;  // изменяем поле price у foundeMealCatalog(у товара каталога) на значение поля price у mealCatalog(объект товара,который мы взяли из тела запроса)
+
+            foundedMealCatalog.totalPrice = mealCatalog.totalPrice; // изменяем поле totalPrice у foundedMealCatalog(у товара каталога) на значение поля totalPrice у mealCatalog(объект товара,который мы взяли из тела запроса)
+
+            await foundedMealCatalog.save(); // сохраняем объект товара каталога в базе данных
+
+            const foundedMealCart = await cartMealModel.find({ name: mealCatalog.name }); // ищем все объекты товаров у которых name равен полю name у mealCatalog(объект товара,который мы взяли из тела запроса),ищем эти объекты товаров по полю name,так как поле name может быть одинаковое у товаров в корзине,но у разных пользователей,поэтому находим все
+
+            console.log(foundedMealCart)
+
+            // если foundedMealCart true,то есть объекты товаров в корзине были найдены
+            if (foundedMealCart) {
+
+                // проходимся по массиву найденных товаров корзины(если они были найдены),указываем async для функции внутри forEach,так как делаем там асинхронный запрос к базе данных для сохранения товара в базе данных,и на каждой итерации этого массива изменяем поля price и totalPrice этого товара в корзине
+                foundedMealCart.forEach(async (mealCart)=>{
+                    
+                    mealCart.price = mealCatalog.price; // изменяем поле price у этого товара корзины(mealCart) на значение поля price у mealCatalog(объект товара каталога,который мы взяли из тела запроса)
+
+                    mealCart.totalPrice = mealCart.amount * mealCatalog.price; // изменяем поле totalPrice у этого товара корзины(mealCart) на значение поля amount у этого товара корзины(mealCart),умноженное на поле price у mealCatalog(объект товара каталога,который мы взяли из тела запроса),то есть считаем общую цену товара со старым значением количества товара в корзине(amount,у каждого пользователя оно может быть разным),но уже с новым значением цены товара(mealCatalog.price)
+
+                    await mealCart.save(); // сохраняем этот обновленный объект товара корзины в базе данных
+
+                })
+
+                // не используем тут этот способ для обновления полей корзины товара,так как нам надо изменить поле totalPrice у товара корзины на значение его текущего amount,умноженное на новое значение цены товара(mealCatalog.price),и делаем это с помощью forEach в коде выше
+                // const updatedMealCart = await cartMealModel.updateMany({name:mealCatalog.name},{price:mealCatalog.price,totalPrice:foundedMealCart.forEach((mealCart)=>{return mealCart.amount}) * mealCatalog.price}); // изменяем поля price и totalPrice у объектов товаров корзины в базе данных,у которых поле name равное полю name у mealCatalog(объект товара,который мы взяли из тела запроса) и помещаем эти измененные товара в переменную updatedMealCart
+
+            }
+
+            return res.json(foundedMealCatalog); // возвращаем на клиент измененный объект товара каталога 
 
 
         } catch (e) {

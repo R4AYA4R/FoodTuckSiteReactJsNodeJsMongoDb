@@ -44,6 +44,8 @@ router.post('/addNewMealCatalog',authMiddleware,userController.addNewMealCatalog
 
 router.post('/deleteMealCatalog',authMiddleware,userController.deleteMealCatalog);  // создаем post запрос на удаление товара из каталога для админа,делаем здесь post запрос,а не delete,так как нужно передать в тело запроса объект товара,который хотим удалить,чтобы брать у этого объекта нужные поля(но можно было сделать и delete запрос,только передавать нужные поля в url к эндпоинту,так как delete запрос не имеет тела запроса)
 
+router.put('/changePriceMealCatalog',authMiddleware,userController.changePriceMealCatalog); // создаем put запрос для изменения цены товара каталога(эта функция будет для админа)
+
 
 router.post('/registration',
     body('email').isEmail(),

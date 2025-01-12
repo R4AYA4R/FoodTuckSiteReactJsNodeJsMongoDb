@@ -1075,6 +1075,21 @@ a {
     max-height: 267px;
 }
 
+.sectionProductItemPage__priceBlock{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+
+
+.sectionProductItemPage__priceBlock-btn{
+    position: relative;
+    top: auto;
+    right: auto;
+}
+
 .sectionProductItemPage__top {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1106,7 +1121,6 @@ a {
 .sectionProductItemPage__rightBlock-price {
     font-weight: 700;
     font-size: 32px;
-    margin-bottom: 16px;
 }
 
 .sectionProductItemPage__rightBlock-bottomBlock {
@@ -1220,6 +1234,12 @@ a {
 
 .sectionProductItemPage__descBlock {
     margin: 56px 0;
+}
+
+.sectionProductItemPage__priceBlockChange{
+    display: flex;
+    align-items: end;
+    gap: 20px;
 }
 
 .descBlock__tabs {
@@ -2030,4 +2050,14 @@ a {
 
 .adminForm__imageBlock-text{
     margin: 15px 0 20px;
+}
+
+.sectionProductItemPage__priceBlock-minusBtn{
+    top: 24px;
+    left: 1px;
+}
+
+.sectionProductItemPage__priceBlock-plusBtn{
+    right: 1px;
+    top: 24px;
 }

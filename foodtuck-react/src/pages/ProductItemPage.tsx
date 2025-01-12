@@ -6,10 +6,13 @@ import { IComment, IMeal, IMealCart } from "../types/types";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useIsOnCreen } from "../hooks/useIsOnScreen";
 import SectionMenu from "../components/SectionMenu";
-import { API_URL } from "../http/http";
+import $api, { API_URL } from "../http/http";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 
 const ProductItemPage = () => {
+
+    const [tabChangePrice, setTabChangePrice] = useState(false); // делаем состояние для таба изменения цены товара для админа(будем показывать или не показывать инпут изменения цены товара в зависимости от этого состояния)
+
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
@@ -145,7 +148,28 @@ const ProductItemPage = () => {
 
     })
 
+    // функция мутации(изменения данных) для изменения цены товара(она будет для админа)
+    const { mutate: mutatePriceMeal } = useMutation({
+        mutationKey: ['updateMealPrice'],
+        mutationFn: async (meal: IMeal) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IMeal),но здесь не обязательно указывать тип,передаем просто объект product как тело запроса,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+            await $api.put<IMeal>(`${API_URL}/changePriceMealCatalog`, meal);
+
+        },
+
+        // при успешной мутации(изменения) цены товара,переобновляем данные товара
+        onSuccess() {
+            refetch();
+            setTabChangePrice(false); // изменяем значение tabChangePrice на false,чтобы убрать инпут для изменения цены товара
+        }
+
+    })
+
     const [totalPriceProduct, setTotalPriceProduct] = useState(data?.data.price);
+
+
+    const [inputPriceMealValue, setInputPriceMealValue] = useState(data?.data.price);// указываем первоначальное значение этому состоянию inputPriceMealValue как data?.data.price,чтобы в инпуте изменения цены товара изначально было значение как у data?.data.price(текущее значение цены товара)
 
 
     const isExistsCart = dataMealsCart?.data.some(m => m.name === data?.data.name); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataMealsCart(в массиве объектов товаров(блюд) корзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен data?.data name(то есть name этого товара(блюда) на этой странице),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
@@ -210,7 +234,51 @@ const ProductItemPage = () => {
 
         }
 
+
+        setInputPriceMealValue(data?.data.price);  // изменяем значение состояния inputPriceMealValue на data?.data.price(текущая цена товара),делаем это при изменении data?.data в этом useEffect,чтобы значение этого состояния при загрузке страницы ставилось на data?.data.price(текущее значение цены товара),иначе при загрузке страницы не ставится значение на data?.data.price
+
     }, [inputAmountValue, data?.data])
+
+
+    // функция для изменения инпута цены товара для админа
+    const changeInputPriceMealValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        if (+e.target.value <= 0) {
+            // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+            setInputPriceMealValue(0);
+
+        } else {
+
+            setInputPriceMealValue(+e.target.value);  // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+
+        }
+
+    }
+
+    // функция для изменения инпута цены товара по кнопке минус для админа
+    const handlerMinusPriceMealBtn = () => {
+
+        // если inputPriceMealValue true(делаем эту проверку,так как показывает ошибку,что это значение может быть undefined) и если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля не отнимало - 1
+        if (inputPriceMealValue && inputPriceMealValue > 1) {
+            // изменяем текущее значение инпута цены на - 1
+            setInputPriceMealValue((prev) => prev && prev - 1); // если prev true(prev &&),то указываем значение состоянию inputPriceMealValue prev - 1, делаем проверку если prev true,иначе показывает ошибку,что prev(текущее значение inputPriceMealValue) может быть undefined
+
+        } else {
+
+            setInputPriceMealValue(1);
+
+        }
+
+    }
+
+    // функция для изменения инпута цены товара по кнопке плюс для админа
+    const handlerPlusPriceMealBtn = () => {
+
+        // изменяем текущее значение инпута цены на + 1
+        setInputPriceMealValue((prev) => prev && prev + 1); // если prev true(prev &&),то указываем значение состоянию inputPriceMealValue prev + 1, делаем проверку если prev true,иначе показывает ошибку,что prev(текущее значение inputPriceMealValue) может быть undefined
+
+
+    }
 
 
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны
@@ -227,6 +295,8 @@ const ProductItemPage = () => {
         refetch();
 
         console.log(data?.data.price)
+
+        setTabChangePrice(false); // изменяем значение состояния tabChangePrice на false,чтобы при изменении pathname(то есть в данном случае,когда меняется url страницы,то есть когда пользователь(админ) переходит по другим страницам товаров,чтобы при переходе на другой товар сразу не показывался инпут изменения цены товара)
 
     }, [pathname])
 
@@ -250,7 +320,7 @@ const ProductItemPage = () => {
 
             mutateRating({ ...data?.data, rating: commentsRatingMiddle } as IMeal); // делаем запрос на изменение рейтинга у товара(в данном случае блюда),разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IMeal(в данном случае делаем это,так как выдает ошибку,что id может быть undefined)
 
-            mutateRatingCartMeals({...data?.data,rating:commentsRatingMiddle} as IMeal); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
+            mutateRatingCartMeals({ ...data?.data, rating: commentsRatingMiddle } as IMeal); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
 
         }
 
@@ -340,7 +410,45 @@ const ProductItemPage = () => {
                             <div className="sectionProductItemPage__top-rightBlock">
                                 <h2 className="sectionProductItemPage__rightBlock-title">{data?.data.name}</h2>
                                 <p className="sectionProductItemPage__rightBlock__text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque diam pellentesque bibendum non dui volutpat fringilla bibendum. Urna, urna, vitae feugiat pretium donec id elementum. Ultrices mattis sed vitae mus risus. Lacus nisi, et ac dapibus sit eu velit in consequat.</p>
-                                <p className="sectionProductItemPage__rightBlock-price">{totalPriceProduct}$</p>
+                                <div className="sectionProductItemPage__priceBlock">
+
+                                    {/* если состояние таба tabChangePrice false,то показываем цену товара и кнопку,чтобы изменить цену товара,если это состояние tabChangePrice будет равно true,то этот блок показываться не будет */}
+                                    {!tabChangePrice &&
+                                        <>
+                                            <p className="sectionProductItemPage__rightBlock-price">{totalPriceProduct}$</p>
+
+                                            {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку админа для изменения цены товара в базе данных */}
+                                            {user.role === 'ADMIN' &&
+                                                <button className="products__item-deleteBtn sectionProductItemPage__priceBlock-btn" onClick={() => setTabChangePrice(true)}>
+                                                    <img src="/images/sectionCatalog/Close.png" alt="" className="products__deleteBtn-img" />
+                                                </button>
+                                            }
+
+                                        </>
+                                    }
+
+                                    {/* если состояние таба tabChangePrice true,то показываем блок с инпутом изменения цены товара,в другом случае он показан не будет */}
+                                    {tabChangePrice &&
+                                        <div className="sectionProductItemPage__priceBlockChange">
+                                            <div className="sectionProductItemPage__bottomBlock-inputBlock">
+                                                <p className="accountSettings__form-text">Price</p>
+                                                <button className="sectionProductItemPage__inputBlock-minusBtn sectionProductItemPage__priceBlock-minusBtn" onClick={handlerMinusPriceMealBtn}>
+                                                    <img src="/images/sectionProductItemPage/Minus (1).png" alt="" className="sectionProductItemPage__inputBlock-minusImg" />
+                                                </button>
+                                                <input type="number" className="sectionProductItemPage__inputBlock-input" value={inputPriceMealValue} onChange={changeInputPriceMealValue} />
+                                                <button className="sectionProductItemPage__inputBlock-plustBtn sectionProductItemPage__priceBlock-plusBtn" onClick={handlerPlusPriceMealBtn}>
+                                                    <img src="/images/sectionProductItemPage/Plus.png" alt="" className="sectionProductItemPage__inputBlock-plusImg" />
+                                                </button>
+                                            </div>
+
+                                            {/* в onClick(по клику на кнопку) вызываем функцию мутации(изменения данных) для изменения цены товара и передаем туда объект товара(data?.data) и изменяем у него поля price и totalPrice на значение состояния inputValuePriceChange(измененную цену товара) */}
+                                            <button className="sectionProductItemPage__bottomBlock-btn" onClick={()=>mutatePriceMeal({...data?.data,price:inputPriceMealValue,totalPrice:inputPriceMealValue} as IMeal)}>
+                                                <p className="sectionProductItemPage__btn-text">Save Changes</p>
+                                            </button>
+                                        </div>
+                                    }
+
+                                </div>
                                 <div className="sectionProductItemPage__rightBlock__stars">
 
                                     {/* если data?.data true,то есть данные о товаре на текущей странице есть(делаем эту проверку,потому что без нее ошибка,типа data?.data может быть undefined),и в src у элементов img(картинок) указываем условие,какую звезду рейтинга отображать в зависимости от значения рейтинга товара */}
@@ -357,10 +465,10 @@ const ProductItemPage = () => {
                                 </div>
                                 <div className="sectionProductItemPage__rightBlock-bottomBlock">
 
-                                    {/* если isExistsBasket true(то есть этот товар(блюдо) на этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
+                                    {/* если isExistsBasket true(то есть этот товар(блюдо) на этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае если tabChangePrice false(то есть таб с инпутом для изменения цены товара для админа равен false,то есть не показан),то показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
                                     {user.userName && isExistsCart ?
                                         <h3 className="textAlreadyInCart">Already in Cart</h3>
-                                        :
+                                        : !tabChangePrice &&
                                         <>
                                             <div className="sectionProductItemPage__bottomBlock-inputBlock">
                                                 <button className="sectionProductItemPage__inputBlock-minusBtn" onClick={handlerMinusAmountBtn}>
