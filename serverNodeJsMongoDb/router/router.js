@@ -46,6 +46,10 @@ router.post('/deleteMealCatalog',authMiddleware,userController.deleteMealCatalog
 
 router.put('/changePriceMealCatalog',authMiddleware,userController.changePriceMealCatalog); // создаем put запрос для изменения цены товара каталога(эта функция будет для админа)
 
+router.get('/getAdminFields',userController.getAdminFields); // создаем get запрос для получения объекта админ полей(текста и тд на сайте),которые потом админ сможет изменять на сайте
+
+router.put('/changeAdminFields',authMiddleware,userController.changeAdminFields);  // создаем put запрос для изменения объекта админ полей(текста и тд на сайте)
+
 
 router.post('/registration',
     body('email').isEmail(),

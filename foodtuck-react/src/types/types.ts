@@ -64,3 +64,10 @@ export interface IComment{
     createdTime:string,
     productNameFor:string
 }
+
+// создаем и экспортируем тип для объекта админ полей(нужных полей текста и тд для сайта,чтобы потом мог админ их изменять в базе данных)
+export interface IAdminFields {
+    _id:number, // указываем поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием  
+    phoneNumber:string
+
+}

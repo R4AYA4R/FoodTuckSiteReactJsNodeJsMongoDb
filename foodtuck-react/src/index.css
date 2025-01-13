@@ -2061,3 +2061,23 @@ a {
     right: 1px;
     top: 24px;
 }
+
+.footer__changeBlockTel{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.footer__changeBlockTel-link{
+    margin-bottom: 0;
+}
+
+.footer__changeTelBlock-input{
+    padding: 10px 20px;
+    text-align: start;
+}
+
+.footer__changeTelBlock-errorText{
+    margin-top: 10px;
+}
