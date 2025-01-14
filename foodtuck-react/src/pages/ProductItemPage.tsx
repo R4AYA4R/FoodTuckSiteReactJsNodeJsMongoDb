@@ -41,6 +41,32 @@ const ProductItemPage = () => {
 
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния user,используя наш типизированный хук для useSelector
 
+
+    // делаем запрос на сервер для получения блюд в секции SectionMenu,для левой части блока этой секции
+    const { data:dataMealsLeft,refetch:refetchDataMealsLeft } = useQuery({
+        queryKey: ['getAllMealsLeft'], // указываем здесь такое же название,как и в файле SectionMenu для получения товаров(объектов блюд),в данном случае,это чтобы после обновления рейтинга товара(блюда),сразу переобновлять массив товаров(блюд) в секции SectionMenu для левого блока этой секции,а не после обновления страницы
+        queryFn: async () => {
+            const response = await axios.get<IMeal[]>('http://localhost:5000/api/getMeals?limit=2&skip=0'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IMeal,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать из базы данных mongodb)
+
+            console.log(response.data);
+
+            return response;
+        }
+    })
+
+    // делаем второй запрос на сервер на получение блюд для секции SectionMenu,для правой части блока этой секции,но уже с другими значениями в query параметрах url,в данном случае это для правого блока отображения блюд 
+    const { data: dataRight,refetch:refetchDataMealsRight } = useQuery({
+        queryKey: ['getAllMealsRight'], // указываем здесь такое же название,как и в файле SectionMenu для получения товаров(объектов блюд),в данном случае,это чтобы после обновления рейтинга товара(блюда),сразу переобновлять массив товаров(блюд) в секции SectionMenu для правого блока этой секции,а не после обновления страницы
+        queryFn: async () => {
+            const response = await axios.get<IMeal[]>('http://localhost:5000/api/getMeals?limit=2&skip=2'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IMeal,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать из базы данных mongodb)
+
+            console.log(response.data);
+
+            return response;
+        }
+    })
+
+
     const { data, refetch } = useQuery({
         queryKey: ['getMealById'],
         queryFn: async () => {
@@ -93,6 +119,10 @@ const ProductItemPage = () => {
         onSuccess() {
 
             refetch();
+
+            refetchDataMealsLeft(); // обновляем массив товаров(блюд) для секции SectionMenu у левого блока этой секции
+
+            refetchDataMealsRight();  // обновляем массив товаров(блюд) для секции SectionMenu у правого блока этой секции
 
         }
 
@@ -442,7 +472,7 @@ const ProductItemPage = () => {
                                             </div>
 
                                             {/* в onClick(по клику на кнопку) вызываем функцию мутации(изменения данных) для изменения цены товара и передаем туда объект товара(data?.data) и изменяем у него поля price и totalPrice на значение состояния inputValuePriceChange(измененную цену товара) */}
-                                            <button className="sectionProductItemPage__bottomBlock-btn" onClick={()=>mutatePriceMeal({...data?.data,price:inputPriceMealValue,totalPrice:inputPriceMealValue} as IMeal)}>
+                                            <button className="sectionProductItemPage__bottomBlock-btn" onClick={() => mutatePriceMeal({ ...data?.data, price: inputPriceMealValue, totalPrice: inputPriceMealValue } as IMeal)}>
                                                 <p className="sectionProductItemPage__btn-text">Save Changes</p>
                                             </button>
                                         </div>

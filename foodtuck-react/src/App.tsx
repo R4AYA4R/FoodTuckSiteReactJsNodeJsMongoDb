@@ -21,7 +21,9 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage/>} />
             <Route path="/catalog" element={<Catalog/>} />
-            <Route path="/aboutUs" element={<AboutUs/>} />
+
+            {/* закомментировали этот путь до страницы AboutUs,так как не сделали эту страницу */}
+            {/* <Route path="/aboutUs" element={<AboutUs/>} /> */}
             <Route path="/cart" element={<Cart/>} />
             <Route path="/userPage" element={<UserPage/>} />
             <Route path="/catalog/:id" element={<ProductItemPage/>} /> {/* указываем после /catalog/ :id,для динамического id,чтобы потом открывалась отдельная страница товара по конкретному id  */}

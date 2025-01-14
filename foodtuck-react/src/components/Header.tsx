@@ -90,9 +90,12 @@ const Header = () => {
                         <li className="menu__list-item">
                             <NavLink to="/catalog" className={({ isActive }) => isActive ? "header__menu-link header__menu-linkActive" : "header__menu-link"}>Catalog</NavLink>
                         </li>
-                        <li className="menu__list-item">
+
+                        {/* закомментировали эту ссылку на страницу About Us,так как не сделали эту страницу */}
+                        {/* <li className="menu__list-item">
                             <NavLink to="/aboutUs" className={({ isActive }) => isActive ? "header__menu-link header__menu-linkActive" : "header__menu-link"}>About Us</NavLink>
-                        </li>
+                        </li> */}
+
                         <li className="menu__list-item">
                             <NavLink to="/userPage" className={({ isActive }) => isActive ? "header__menu-link header__menu-linkActive" : "header__menu-link"}>
                                 <img src="/images/header/User.png" alt="" className="menu__list-itemImg" />

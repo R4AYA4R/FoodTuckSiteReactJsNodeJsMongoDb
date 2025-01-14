@@ -77,8 +77,8 @@ const Footer = () => {
                                 <h4 className="topBlock__item-title">Links</h4>
                             </li>
                             <li className="topBlock__list-item">
-                                <Link to="/aboutUs" className="footer__item-link">
-                                    <p className="footer__item-linkText">About us</p>
+                                <Link to="/userPage" className="footer__item-link">
+                                    <p className="footer__item-linkText">User Page</p>
                                 </Link>
                             </li>
                             <li className="topBlock__list-item">
